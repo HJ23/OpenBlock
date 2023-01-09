@@ -14,17 +14,16 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -126,5 +125,26 @@ public class MainController {
     public @ResponseBody String profile(){
         return "OK";
     }
+
+
+    @RequestMapping(value={"/404"},method = RequestMethod.GET)
+    public ModelAndView notFound(){
+        ModelAndView mav=new ModelAndView();
+        mav.setViewName("404");
+        return mav;
+    }
+
+
+    @RequestMapping(value={"/collections/{collection_id}"},method = RequestMethod.GET)
+    public ModelAndView  collections(@PathVariable("collection_id") int collection_id){
+        String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz"};
+        if(collection_id>collections.length){
+            return new ModelAndView("redirect:/404");
+        }
+        ModelAndView mav=new ModelAndView();
+        mav.setViewName("contact");
+        return mav;
+    }
+
 
 }
