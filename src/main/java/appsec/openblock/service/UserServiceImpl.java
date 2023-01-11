@@ -22,8 +22,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void saveUser(User user) {
         try {
-            user.setPassword(Utilities.generatePasswordHash(user.getPassword()));
+            user.setPassword(Utilities.generateMD5Hash(user.getPassword()));
             user.setRole(Role.USER);
+            user.setPrivateUserToken(Utilities.generatePrivateUserToken(user.getPassword()+user.getEmail()));
         }catch (NoSuchAlgorithmException exception){
             return;
         }
@@ -46,6 +47,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Optional<User> getUserDetails(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override

@@ -1195,6 +1195,24 @@ h6 {
   background: rgba(39, 167, 118, 0.8);
 }
 
+.contact .php-email-form button[type=button] {
+  background: var(--color-primary);
+  border: 0;
+  padding: 10px 35px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+
+.contact .php-email-form button[type=button]:hover {
+  background: rgba(39, 167, 118, 0.8);
+}
+
+
+
+
+
+
 @-webkit-keyframes animate-loading {
   0% {
     transform: rotate(0deg);

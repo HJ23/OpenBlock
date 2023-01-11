@@ -12,8 +12,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -29,6 +31,15 @@ public class User implements UserDetails  {
             generator = "users_sequence"
     )
     private Long id;
+
+    @Column(name = "balance")
+    private Long balance;
+
+    @Column(name="private_user_token")
+    private String privateUserToken;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private Set<NFT> ownedNFTs;
 
     @NotNull(message = "First Name cannot be empty")
     @Column(name = "first_name")
@@ -56,18 +67,6 @@ public class User implements UserDetails  {
         return captchaInput;
     }
 
-    public void setCaptchaInput(String captchaInput) {
-        this.captchaInput = captchaInput;
-    }
-
-    public String getCaptchaAnswer() {
-        return captchaAnswer;
-    }
-
-    public void setCaptchaAnswer(String captchaAnswer) {
-        this.captchaAnswer = captchaAnswer;
-    }
-
     @Transient
     private String captchaAnswer;
     @Transient
@@ -91,10 +90,36 @@ public class User implements UserDetails  {
     @Column(name = "enabled")
     private Boolean enabled = true;
 
+    public String getPrivateUserToken() {
+        return privateUserToken;
+    }
+    public Set<NFT> getOwnedNFTs() {
+        return ownedNFTs;
+    }
+
+    public void setOwnedNFTs(Set<NFT> ownedNFTs) {
+        this.ownedNFTs = ownedNFTs;
+    }
+
+    public void setPrivateUserToken(String privateUserToken) {
+        this.privateUserToken = privateUserToken;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
         return Collections.singletonList(authority);
+    }
+
+    public void setCaptchaInput(String captchaInput) {
+        this.captchaInput = captchaInput;
+    }
+
+    public String getCaptchaAnswer() {
+        return captchaAnswer;
+    }
+
+    public void setCaptchaAnswer(String captchaAnswer) {
+        this.captchaAnswer = captchaAnswer;
     }
 
     @Override

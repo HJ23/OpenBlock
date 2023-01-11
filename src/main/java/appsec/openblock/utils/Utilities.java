@@ -29,7 +29,7 @@ public class Utilities {
         return retList;
     }
 
-    public static String generatePasswordHash(String password) throws NoSuchAlgorithmException {
+    public static String generateMD5Hash(String password) throws NoSuchAlgorithmException {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             messageDigest.update(password.getBytes(), 0, password.length());
             String hashedPass = new BigInteger(1, messageDigest.digest()).toString(16);
@@ -39,5 +39,14 @@ public class Utilities {
             return hashedPass;
     }
 
+    public static String generatePrivateUserToken(String userSecret) throws NoSuchAlgorithmException{
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        messageDigest.update(userSecret.getBytes(), 0, userSecret.length());
+        String hashedPass = new BigInteger(1, messageDigest.digest()).toString(16);
+        if (hashedPass.length() < 32) {
+            hashedPass = "0" + hashedPass;
+        }
+        return hashedPass;
+    }
 
 }
