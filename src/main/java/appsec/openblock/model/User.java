@@ -38,9 +38,6 @@ public class User implements UserDetails  {
     @Column(name="private_user_token")
     private String privateUserToken;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private Set<NFT> ownedNFTs;
-
     @NotNull(message = "First Name cannot be empty")
     @Column(name = "first_name")
     private String firstName;
@@ -87,18 +84,24 @@ public class User implements UserDetails  {
     @Column(name = "locked")
     private Boolean locked = false;
 
+
+
+
+
+
     @Column(name = "enabled")
     private Boolean enabled = true;
 
     public String getPrivateUserToken() {
         return privateUserToken;
     }
-    public Set<NFT> getOwnedNFTs() {
-        return ownedNFTs;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setOwnedNFTs(Set<NFT> ownedNFTs) {
-        this.ownedNFTs = ownedNFTs;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setPrivateUserToken(String privateUserToken) {

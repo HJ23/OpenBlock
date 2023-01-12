@@ -97,11 +97,17 @@ public class NFT  {
     @Column(name = "token",unique = true) // unique art token
     private String token;
 
-
-
     @ManyToOne
-    @JoinColumn(name="private_user_token")
+    @JoinColumn(name="user_id")
     private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Column(name="end_bidding")
     private LocalDateTime endBidding;

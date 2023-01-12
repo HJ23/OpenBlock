@@ -118,12 +118,6 @@ public class MainController {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String email=authentication.getName();
         User user=userService.getUserDetails(email).stream().findFirst().get();
-        Set<NFT> ownedNFTs=nftService.getOwnedArts(user.getPrivateUserToken());
-
-
-        for(NFT nft:ownedNFTs) {
-            logger.warning(nft.getToken());
-        }
 
         //mav.addObject();
         mav.setViewName("profile");
@@ -152,7 +146,6 @@ public class MainController {
         mav.setViewName("404");
         return mav;
     }
-
 
     @RequestMapping(value={"/collections/{collection_id}"},method = RequestMethod.GET)
     public ModelAndView  collections(@PathVariable("collection_id") int collection_id){

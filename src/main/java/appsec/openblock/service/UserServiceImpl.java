@@ -1,5 +1,6 @@
 package appsec.openblock.service;
 
+import appsec.openblock.model.NFT;
 import appsec.openblock.model.Role;
 import appsec.openblock.model.User;
 import appsec.openblock.repository.UserRepository;

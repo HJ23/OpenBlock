@@ -1,5 +1,6 @@
 package appsec.openblock.service;
 
+import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
 import org.springframework.stereotype.Service;
 

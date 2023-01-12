@@ -1,32 +1,24 @@
 package appsec.openblock.service;
 
 import appsec.openblock.model.NFT;
+import appsec.openblock.model.User;
 import appsec.openblock.repository.NFTRepository;
+import appsec.openblock.repository.UserRepository;
 import appsec.openblock.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
 public class NFTServiceImpl implements NFTService {
+    @Autowired
+    UserRepository userRepository;
     private Logger logger= Logger.getLogger(NFTServiceImpl.class.getName());
     @Autowired
     NFTRepository nftRepository;
-
-    @Override
-    public Set<NFT> getOwnedArts(String privateUserToken) {
-        return nftRepository.findByPrivateUserToken(privateUserToken);
-    }
-
-    @Override
-    public void setAsNFTOwner(String privateUserToken, String token) {
-
-    }
 
     @Override
     public void saveNFT(NFT nft) {
@@ -39,5 +31,18 @@ public class NFTServiceImpl implements NFTService {
             logger.warning(exception.getMessage());
         }
 
+    }
+
+    @Override
+    public void setOwner(User user,NFT nft) {
+        userRepository.findById(user.getId()).map( us->{
+            nft.setUser(us);
+            return nftRepository.save(nft);
+        });
+    }
+
+    @Override
+    public List<NFT> getByOwner(User user) {
+        return nftRepository.findByUserId(user.getId());
     }
 }
