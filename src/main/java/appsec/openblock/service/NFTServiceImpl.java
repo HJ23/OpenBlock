@@ -34,8 +34,16 @@ public class NFTServiceImpl implements NFTService {
     }
 
     @Override
-    public void setOwner(User user,NFT nft) {
+    public void setOwner(User user,NFT nft)  {
         userRepository.findById(user.getId()).map( us->{
+            nft.setIsSold(true);
+            Random randomGenerator = new Random();
+            try {
+                nft.setToken(Utilities.generateMD5Hash(String.valueOf(randomGenerator.nextInt(0, 100000))+String.valueOf(System.currentTimeMillis())));
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+
             nft.setUser(us);
             return nftRepository.save(nft);
         });

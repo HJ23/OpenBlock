@@ -6,6 +6,10 @@ import appsec.openblock.model.User;
 import appsec.openblock.service.NFTService;
 import appsec.openblock.service.UserService;
 import appsec.openblock.utils.Utilities;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.io.IOUtils;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,8 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -41,6 +46,9 @@ public class MainController {
 
         File file=new File(collectionPath.toString());
         String directories[]=file.list();
+        List<String> list = new ArrayList<String>(Arrays.asList(directories));
+        list.remove("Auctions");
+        directories=list.toArray(new String[0]);
 
         Random generator=new Random();
 
@@ -83,6 +91,53 @@ public class MainController {
         }
         return "OK";
 
+    }
+
+    @RequestMapping(value={"/invoice"},method = RequestMethod.GET)
+    public void generateInvoice(HttpServletResponse response) throws IOException {
+        String fileName=UUID.randomUUID().toString();
+        Path currentPath = Paths.get(System.getProperty("user.dir"));
+        Path invoicePath = Paths.get(currentPath.toString(),"src","main","resources","invoices",fileName);
+
+
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String email=authentication.getName();
+        User user=userService.getUserDetails(email).stream().findFirst().get();
+        List<NFT> nfts=nftService.getByOwner(user);
+        String invoice="<html><body><table border='1'><th>NFT token</th><th>Price</th><th>Date</th><th>Artist crypto address</th>";
+
+        for(NFT nft:nfts){
+            invoice+="<tr>";
+            invoice+="<td>"+nft.getToken()+"</td>";
+            invoice+="<td>"+nft.getInitialPrice()+"</td>";
+            invoice+="<td>"+nft.getEndBidding()+"</td>";
+            invoice+="<td>"+nft.getArtistCryptoAddress()+"</td>";
+            invoice+="</tr>";
+        }
+        invoice+="</table>";
+        invoice+="</body>";
+        invoice+="</html>";
+
+
+
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--disable-gpu", "--run-all-compositor-stages-before-draw");
+        ChromeDriver driver=new ChromeDriver(options);
+
+        PrintWriter writer = new PrintWriter(invoicePath.toAbsolutePath().toString().replace("\\","/")+".html", "UTF-8");
+        writer.println(invoice);
+        writer.close();
+
+        driver.get("file:///"+invoicePath.toAbsolutePath().toString().replace("\\","/")+".html");
+        String command="Page.printToPDF";
+        Map<String,Object> output=driver.executeCdpCommand(command,new HashMap<>());
+        byte[] byteArray = java.util.Base64.getDecoder().decode((String) output.get("data"));
+        ByteArrayInputStream out=new ByteArrayInputStream(byteArray);
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition","attachment; filename=invoice.pdf");
+        IOUtils.copy(out,response.getOutputStream());
     }
 
 
@@ -139,6 +194,13 @@ public class MainController {
         return mav;
     }
 
+    @RequestMapping(value={"/balance"},method = RequestMethod.GET)
+    public ModelAndView addCard(){
+        ModelAndView mav=new ModelAndView();
+        mav.setViewName("addcard");
+        return mav;
+    }
+
 
     @RequestMapping(value={"/404"},method = RequestMethod.GET)
     public ModelAndView notFound(){
@@ -157,5 +219,8 @@ public class MainController {
         mav.setViewName("contact");
         return mav;
     }
+
+
+
 
 }

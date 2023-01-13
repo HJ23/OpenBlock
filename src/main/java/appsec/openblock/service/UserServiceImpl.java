@@ -6,12 +6,14 @@ import appsec.openblock.model.User;
 import appsec.openblock.repository.UserRepository;
 import appsec.openblock.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -53,6 +55,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> getUserDetails(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthority(String email) {
+        return userRepository.findByEmail(email).get().getAuthorities();
     }
 
     @Override

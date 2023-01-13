@@ -3,6 +3,7 @@ package appsec.openblock.service;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

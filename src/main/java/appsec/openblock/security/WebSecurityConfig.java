@@ -54,6 +54,8 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -61,7 +63,7 @@ public class WebSecurityConfig {
                 // URL matching for accessibility
                 .antMatchers("/", "/login", "/register","/assets/**","/collections/**","/api/**","/admin1/**").permitAll()
                 .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/profile/**").hasAnyAuthority("USER")
+                .antMatchers("/profile/**","/balance/**","/invoice/*").hasAnyAuthority("USER")
                 .and()
                 // form login
                 .csrf().disable().formLogin()

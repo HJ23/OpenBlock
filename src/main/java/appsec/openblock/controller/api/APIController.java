@@ -1,7 +1,9 @@
 package appsec.openblock.controller.api;
 
+import appsec.openblock.model.Card;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
+import appsec.openblock.service.CardService;
 import appsec.openblock.service.NFTService;
 import appsec.openblock.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,14 +26,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/collection")
 public class APIController {
     @Autowired
     NFTService nftService;
     @Autowired
     UserService userService;
 
-    @PostMapping
+    @Autowired
+    CardService cardService;
+
+    @PostMapping(value = {"/api/v1/collection"})
     public ResponseEntity<String> addNFT(@RequestParam("fileUpload") MultipartFile image,
                                      @RequestParam("artistFullName") String artistFullName,
                                      @RequestParam("endBidding") String time,
@@ -69,5 +75,27 @@ public class APIController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
+    @PostMapping(value = {"/api/v1/card"})
+    public @ResponseBody  String saveCard(@Valid @ModelAttribute Card card, BindingResult bindingResult){
+        System.out.println(card.getCardNumber()+"--"+card.getExpireDate()+"--"+card.getSecurityCode()+"--"+card.getFullName());
+        if(bindingResult.hasErrors()){
+            return bindingResult.getAllErrors().get(0).getDefaultMessage();
+        }
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String email=authentication.getName();
+        User user=userService.getUserDetails(email).stream().findFirst().get();
+
+        cardService.setOwner(user,card);
+        return "OK!";
+    }
+
+
 
 }
+
+
+
+
+
+
+

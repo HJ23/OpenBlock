@@ -85,10 +85,6 @@ public class User implements UserDetails  {
     private Boolean locked = false;
 
 
-
-
-
-
     @Column(name = "enabled")
     private Boolean enabled = true;
 

@@ -18,6 +18,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -25,7 +27,6 @@
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js"></script>
-  <script src="assets/js/card.js"></script>
   <link href="assets/css/card.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
@@ -201,14 +202,15 @@
       </div>
       <div class="row justify-content-center mt-4">
       <div class="card-form-container">
-        <form action="/card" method="post" class="php-email-form">
+
+        <form  class="php-email-form">
           <div class="card-field-container">
               <label for="name" class="card-label">Name</label>
-              <input id="name" maxlength="20" type="text" class="card-input">
+              <input id="name" maxlength="20" type="text" name="fullName" class="card-input">
           </div>
           <div class="card-field-container">
               <label class="card-label" for="cardnumber">Card Number</label><span id="generatecard">generate random</span>
-              <input class="card-input" id="cardnumber" type="text"  inputmode="numeric">
+              <input class="card-input" id="cardnumber" type="text" name="cardnumber" inputmode="numeric">
               <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1" xmlns="http://www.w3.org/2000/svg"
                   xmlns:xlink="http://www.w3.org/1999/xlink">
   
@@ -216,15 +218,15 @@
           </div>
           <div class="card-field-container">
               <label class="card-label" for="expirationdate">Expiration (mm/yy)</label>
-              <input  class="card-input" id="expirationdate" type="text"  inputmode="numeric">
+              <input  class="card-input" id="expirationdate" type="text" name="expirationdate" inputmode="numeric">
           </div>
           <div class="card-field-container">
               <label class="card-label" for="securitycode">Security Code</label>
-              <input class="card-input" id="securitycode" type="text"   inputmode="numeric">
+              <input class="card-input" id="securitycode" type="text" name="securitycode"  inputmode="numeric">
           </div>
           <br>
          <div class="form-group mb-4">
-            <div class="text-center"><button type="submit">Save</button></div>
+            <div class="text-center"><button type="button" onclick="submitForm()">Save</button></div>
         </div>
 
         </form>
@@ -266,10 +268,41 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
- 
+  <script src="assets/js/card.js"></script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+  <script>
+
+
+    function submitForm(){
+
+    var fullName = $('#name').val();
+    var expireDate = $('#expirationdate').val();
+    var cardNumber = $('#cardnumber').val();
+    var securityCode = $('#securitycode').val();
+    
+    var formData = new FormData();
+    formData.append('fullName', fullName);
+    formData.append('expireDate', expireDate );
+    formData.append('cardNumber', cardNumber);
+    formData.append('securityCode', securityCode);
+
+    $.ajax({
+      type: "POST",
+      url: "/api/v1/card",
+      data: formData,
+      contentType: false,
+      processData: false,
+      cache: false,
+      success: function(data) {
+        alert("success");
+     }
+    });
+  }
+
+   </script>
 
 </body>
 

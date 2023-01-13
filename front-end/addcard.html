@@ -201,10 +201,11 @@
       </div>
       <div class="row justify-content-center mt-4">
       <div class="card-form-container">
-        <form action="/card" method="post" class="php-email-form">
+
+        <form  class="php-email-form">
           <div class="card-field-container">
               <label for="name" class="card-label">Name</label>
-              <input id="name" maxlength="20" type="text" class="card-input">
+              <input id="fullName" maxlength="20" type="text" name="fullName" class="card-input">
           </div>
           <div class="card-field-container">
               <label class="card-label" for="cardnumber">Card Number</label><span id="generatecard">generate random</span>
@@ -216,7 +217,7 @@
           </div>
           <div class="card-field-container">
               <label class="card-label" for="expirationdate">Expiration (mm/yy)</label>
-              <input  class="card-input" id="expirationdate" type="text"  inputmode="numeric">
+              <input  class="card-input" id="expireDate" type="text" name="expireDate" inputmode="numeric">
           </div>
           <div class="card-field-container">
               <label class="card-label" for="securitycode">Security Code</label>
@@ -224,7 +225,7 @@
           </div>
           <br>
          <div class="form-group mb-4">
-            <div class="text-center"><button type="submit">Save</button></div>
+            <div class="text-center"><button type="button" onclick="">Save</button></div>
         </div>
 
         </form>
@@ -270,6 +271,37 @@
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
+
+  <script>
+
+function submitForm(){
+
+var fullName = $('#fullName').val();
+var expireDate = $('#expireDate').val();
+var cardNumber = $('#cardNumber').val();
+var securityCode = $('#securityCode').val();
+
+var formData = new FormData();
+formData.append('fullName', fullName);
+formData.append('expireDate', expireDate );
+formData.append('cardNumber', cardNumber);
+formData.append('securityCode', securityCode);
+
+$.ajax({
+  type: "POST",
+  url: "/api/v1/card",
+  data: formData,
+  contentType: false,
+  processData: false,
+  cache: false,
+  success: function(data) {
+    alert("success");
+ }
+});
+}
+
+   </script>
 
 </body>
 

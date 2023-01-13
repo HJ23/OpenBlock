@@ -1,12 +1,12 @@
 package appsec.openblock.repository;
 
-import appsec.openblock.model.NFT;
+import appsec.openblock.model.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface NFTRepository extends JpaRepository<NFT,Long> {
-    List<NFT> findByUserId(Long id);
+public interface CardRepository extends JpaRepository<Card, Long> {
+    List<Card> findByUserId(Long userId);
 }
