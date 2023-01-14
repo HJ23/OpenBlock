@@ -150,20 +150,23 @@
 
 <script type="text/javascript">
     function send() {
-        var otp_json = {
-            "otp": $("#otp").val()
-        }
         var path=location.search;
         const urlParams = new URLSearchParams(path);
-        const param=urlParams.get("id");
+        const token=urlParams.get("token");
 
+        var otp_json = {
+            "otp": $("#otp").val(),
+            "token": token
+        }
         $.ajax({
-            url: '/api/v1/otp/'+param,
+            url: '/api/v1/otp',
             type: 'post',
             dataType: 'json',
             contentType: 'application/json',
-            error: function(msg){
-              $("#error-message").html(msg);
+            statusCode:{
+              200:function(){
+                window.location.href="/login";
+              }
             },
             data: JSON.stringify(otp_json)
         });

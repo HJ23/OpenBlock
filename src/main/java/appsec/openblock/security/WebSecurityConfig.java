@@ -27,6 +27,9 @@ import javax.sql.DataSource;
 public class WebSecurityConfig {
 
     @Autowired
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+    @Autowired
     private CustomLoginSucessHandler sucessHandler;
 
     @Bean
@@ -61,14 +64,14 @@ public class WebSecurityConfig {
 
         http.authorizeRequests()
                 // URL matching for accessibility
-                .antMatchers("/", "/login", "/register","/assets/**","/collections/**","/api/**","/admin1/**").permitAll()
+                .antMatchers("/", "/login", "/register","/collections/**","/admin1/**","/verification","/api/v1/otp").permitAll()
                 .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/profile/**","/balance/**","/invoice/*").hasAnyAuthority("USER")
+                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**").hasAnyAuthority("USER")
                 .and()
                 // form login
                 .csrf().disable().formLogin()
                 .loginPage("/login")
-                .failureUrl("/login?error=true")
+                .failureUrl("/login?error=true").failureHandler(customAuthenticationFailureHandler)
                 .successHandler(sucessHandler)
                 .usernameParameter("email")
                 .passwordParameter("password")
@@ -89,7 +92,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**");
+        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**","/assets/**");
     }
 
 }

@@ -32,8 +32,19 @@ public class User implements UserDetails  {
     )
     private Long id;
 
+    public Integer getLastOtp() {
+        return lastOtp;
+    }
+
+    public void setLastOtp(int lastOtp) {
+        this.lastOtp = lastOtp;
+    }
+
+    @Column(name="last_otp")
+    private int lastOtp;
+
     @Column(name = "balance")
-    private Long balance;
+    private int balance;
 
     @Column(name="private_user_token")
     private String privateUserToken;
@@ -67,8 +78,15 @@ public class User implements UserDetails  {
     @Transient
     private String captchaAnswer;
     @Transient
-    @NotBlank(message = "Captcha is empty!")
     private String captchaInput;
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -162,6 +180,10 @@ public class User implements UserDetails  {
     }
 
     public String getEmail() { return email; }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public void setEmail(String email) { this.email = email; }
 

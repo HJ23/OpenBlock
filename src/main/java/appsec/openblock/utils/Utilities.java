@@ -49,4 +49,8 @@ public class Utilities {
         return hashedPass;
     }
 
+    public static int generateOTP(){
+        return new Random().nextInt(1000,9999);
+    }
+
 }

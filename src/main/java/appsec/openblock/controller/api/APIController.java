@@ -1,5 +1,6 @@
 package appsec.openblock.controller.api;
 
+import appsec.openblock.DTO.OTP;
 import appsec.openblock.model.Card;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
@@ -16,14 +17,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class APIController {
@@ -34,6 +39,28 @@ public class APIController {
 
     @Autowired
     CardService cardService;
+
+
+    @PostMapping(value={"/api/v1/otp"})
+    public ResponseEntity<String> otpCheck(@RequestBody OTP otp){
+        System.out.println(otp.getToken()+"--------------"+otp.getOtp());
+
+        byte[] bdetails= Base64.getDecoder().decode(otp.getToken());
+        String details = new String(bdetails, StandardCharsets.UTF_8);
+        String email=details.split("-")[0];
+        String privateToken=details.split("-")[1];
+        User user=userService.getUserDetails(email).get();
+
+        System.out.println("****************************"+email);
+        System.out.println("****************************"+privateToken);
+        System.out.println("****************************"+otp.getOtp());
+
+        if(user.getLastOtp().toString().equals(otp.getOtp()) && user.getPrivateUserToken().equals(privateToken)){
+            userService.enableUser(user);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+    }
 
     @PostMapping(value = {"/api/v1/collection"})
     public ResponseEntity<String> addNFT(@RequestParam("fileUpload") MultipartFile image,

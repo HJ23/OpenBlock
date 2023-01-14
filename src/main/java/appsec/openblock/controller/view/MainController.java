@@ -93,6 +93,16 @@ public class MainController {
 
     }
 
+    @RequestMapping(value="/verification",method = RequestMethod.GET)
+    public ModelAndView verify(@RequestParam("token") String token){
+        if(!token.equals("")) {
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("otp");
+            return mav;
+        }
+        return new ModelAndView("redirect:/404");
+    }
+
     @RequestMapping(value={"/invoice"},method = RequestMethod.GET)
     public void generateInvoice(HttpServletResponse response) throws IOException {
         String fileName=UUID.randomUUID().toString();

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -25,9 +26,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void saveUser(User user) {
         try {
+            user.setBalance(0);
+            user.setEnabled(false);
             user.setPassword(Utilities.generateMD5Hash(user.getPassword()));
             user.setRole(Role.USER);
             user.setPrivateUserToken(Utilities.generatePrivateUserToken(user.getPassword()+user.getEmail()));
+            user.setLastOtp(Utilities.generateOTP());
         }catch (NoSuchAlgorithmException exception){
             return;
         }
@@ -41,6 +45,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void setOtp(User user) {
+        user.setLastOtp(Utilities.generateOTP());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void enableUser(User user) {
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 
     @Override

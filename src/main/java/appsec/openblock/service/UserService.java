@@ -15,8 +15,9 @@ public interface UserService {
     public void saveUser(User user);
     public boolean isUserPresent(User user);
     public boolean isMobilePresent(User user);
-
+    public void setOtp(User user);
     public Optional<User> getUserDetails(String email);
+    public void enableUser(User user);
     public Collection<? extends GrantedAuthority> getAuthority(String email);
 
 }
