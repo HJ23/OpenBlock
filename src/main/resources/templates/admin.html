@@ -116,6 +116,7 @@
                   <option value="4">Moonbirds</option>
                   <option value="5">The Potatoz</option>
                   <option value="6">Panksnoted</option>
+                  <option value="7">Freestyle</option>
                 </select>
             </div>
               
@@ -190,9 +191,10 @@
       contentType: false,
       processData: false,
       cache: false,
-      success: function(data) {
+      statusCode:{ 
+        200:function(data) {
         alert("success");
-     }
+     }}
     });
   }
 

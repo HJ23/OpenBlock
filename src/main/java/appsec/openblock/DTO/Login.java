@@ -1,7 +1,7 @@
 package appsec.openblock.DTO;
 
 
-public class LoginDTO {
+public class Login {
     private String email;
     private String password;
 

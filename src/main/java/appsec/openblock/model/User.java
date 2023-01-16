@@ -12,6 +12,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +46,17 @@ public class User implements UserDetails  {
 
     @Column(name = "balance")
     private int balance;
+
+    @Column(name="profile_pic")
+    private String profilePic;
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
 
     @Column(name="private_user_token")
     private String privateUserToken;
@@ -91,6 +103,14 @@ public class User implements UserDetails  {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    public String getCreatedAt() {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss").format(createdAt);
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     @UpdateTimestamp
     @Column(name = "updated_at")

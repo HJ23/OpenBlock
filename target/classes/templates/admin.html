@@ -190,9 +190,10 @@
       contentType: false,
       processData: false,
       cache: false,
-      success: function(data) {
+      statusCode:{ 
+        200:function(data) {
         alert("success");
-     }
+     }}
     });
   }
 

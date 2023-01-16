@@ -62,12 +62,13 @@
           <li class="dropdown"><a href="#"><span>Collections</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
             <ul>
               <li><a href="/collections?id=1">Cryptopunks</a></li>
-                <li><a href="/collections?id=2">Mutant Ape Yacht Club</a></li>
-                <li><a href="/collections?id=3">Bored Ape Yacht Club</a></li>
-                <li><a href="/collections?id=4">Moonbirds</a></li>
-                <li><a href="/collections?id=5">The Potatoz</a></li>
-                <li><a href="/collections?id=6">PANKSNOTDED</a></li>
-                <li><a class="text-danger" href="/auction">Auction</a></li> 
+              <li><a href="/collections?id=2">Mutant Ape Yacht Club</a></li>
+              <li><a href="/collections?id=3">Bored Ape Yacht Club</a></li>
+              <li><a href="/collections?id=4">Moonbirds</a></li>
+              <li><a href="/collections?id=5">The Potatoz</a></li>
+              <li><a href="/collections?id=6">PANKSNOTDED</a></li>
+              <li><a class="text-danger" href="/auction">Auction</a></li> 
+              
             </ul>
 
           </li>
@@ -86,10 +87,11 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-6 text-center">
+
           <h2>Your new NFT marketplace<span>OpenBlock</span></h2>
           <p>Explore, collect, and sell NFTs.</p>
-          <a href="/register" class="btn-get-started">Register</a>
-          <a href="/login" class="btn-get-started">Login</a>
+
+          <h2 th:text="${'Collection name: ' + name}"> </h2>          
 
         </div>
       </div>

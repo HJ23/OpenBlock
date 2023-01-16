@@ -2,9 +2,11 @@ package appsec.openblock.controller.api;
 
 import appsec.openblock.DTO.OTP;
 import appsec.openblock.model.Card;
+import appsec.openblock.model.Complain;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
 import appsec.openblock.service.CardService;
+import appsec.openblock.service.ComplainService;
 import appsec.openblock.service.NFTService;
 import appsec.openblock.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,14 @@ public class APIController {
 
     @Autowired
     CardService cardService;
+    @Autowired
+    ComplainService complainService;
+
+    @PostMapping(value="/api/v1/contact")
+    public ResponseEntity<String> contact(@RequestBody Complain complain){
+        complainService.saveComplain(complain);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 
 
     @PostMapping(value={"/api/v1/otp"})
@@ -50,10 +60,6 @@ public class APIController {
         String email=details.split("-")[0];
         String privateToken=details.split("-")[1];
         User user=userService.getUserDetails(email).get();
-
-        System.out.println("****************************"+email);
-        System.out.println("****************************"+privateToken);
-        System.out.println("****************************"+otp.getOtp());
 
         if(user.getLastOtp().toString().equals(otp.getOtp()) && user.getPrivateUserToken().equals(privateToken)){
             userService.enableUser(user);
@@ -115,6 +121,36 @@ public class APIController {
         cardService.setOwner(user,card);
         return "OK!";
     }
+
+
+    @PostMapping(value = {"/api/v1/profile"})
+    public ResponseEntity<String> profileEdit(@RequestParam("profilePic") MultipartFile image,
+                                         @RequestParam("email") String newEmail,
+                                         @RequestParam("newPassword") String newPassword,
+                                         @RequestParam("mobile") String mobile
+    ){
+
+
+        System.out.println(newEmail+"---"+newPassword+"---"+mobile);
+
+        String fileName = image.getOriginalFilename();
+        Path currentPath = Paths.get(System.getProperty("user.dir"));
+        Path profilePicturePath = Paths.get(currentPath.toString(),"src","main","resources","static","profile-pictures",fileName);
+        Path profilePictureDBPath = Paths.get("profile-pictures",fileName);
+        File serverFile = new File(profilePicturePath.toString());
+        try {
+            image.transferTo(serverFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String email=authentication.getName();
+        User user=userService.getUserDetails(email).get();
+        userService.updateUser(user,newEmail,newPassword,profilePictureDBPath.toString(),mobile);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
+
 
 
 

@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 @Table(name="NFT")
 public class NFT  {
     @SequenceGenerator(
-            name = "users_sequence",
-            sequenceName = "users_sequence",
+            name = "nft_sequence",
+            sequenceName = "nft_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "users_sequence"
+            generator = "nft_sequence"
     )
     private Long id;
 

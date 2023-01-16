@@ -1,12 +1,10 @@
 # OpenBlock
 OpenBlock is a vulnerable NFT marketplace.
 
-* Save cards in DB +
-* Invoice functionality (SSRF) +
+* Payment page (from card to balance) & download invoice  -
 * NFT check -
-* Auction functionality -
-* Contact with admin (/contact) -
+* Auction functionality (Timer and bot) -
 * Auction page where sold items and ongoing auctions listed -
-* Profile functionality - 
-* Gallery -
-* 
+* Forbid logged in user /register,/login -
+* Add logout button -
+* Add contact functionality to admin page -

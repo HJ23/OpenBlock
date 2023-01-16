@@ -60,6 +60,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void updateUser(User user,String email, String password, String profilePic,String mobile) {
+        try {
+            user.setProfilePic(profilePic);
+            user.setEmail(email);
+            user.setMobile(mobile);
+            user.setPassword(Utilities.generateMD5Hash(password));
+            userRepository.save(user);
+        }catch (NoSuchAlgorithmException exp){
+        }
+    }
+
+    @Override
     public boolean isMobilePresent(User user){
         Optional<User> userFromDB=userRepository.findByMobile(user.getMobile());
         if(userFromDB.isPresent()){

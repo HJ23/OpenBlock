@@ -1,8 +1,10 @@
 package appsec.openblock.controller.view;
 
-import appsec.openblock.DTO.LoginDTO;
+import appsec.openblock.DTO.Login;
+import appsec.openblock.model.Card;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
+import appsec.openblock.service.CardService;
 import appsec.openblock.service.NFTService;
 import appsec.openblock.service.UserService;
 import appsec.openblock.utils.Utilities;
@@ -37,6 +39,9 @@ public class MainController {
 
     @Autowired
     NFTService nftService;
+
+    @Autowired
+    CardService cardService;
 
     @RequestMapping(value={"/","/index","*"},method = RequestMethod.GET)
     public ModelAndView index(){
@@ -84,7 +89,7 @@ public class MainController {
     }
 
     @RequestMapping(value={"/login"},method = RequestMethod.POST)
-    public @ResponseBody String loginSubmit(@Valid @ModelAttribute LoginDTO login, BindingResult bindingResult){
+    public @ResponseBody String loginSubmit(@Valid @ModelAttribute Login login, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
             return bindingResult.getAllErrors().get(0).getDefaultMessage();
@@ -92,6 +97,7 @@ public class MainController {
         return "OK";
 
     }
+
 
     @RequestMapping(value="/verification",method = RequestMethod.GET)
     public ModelAndView verify(@RequestParam("token") String token){
@@ -107,7 +113,7 @@ public class MainController {
     public void generateInvoice(HttpServletResponse response) throws IOException {
         String fileName=UUID.randomUUID().toString();
         Path currentPath = Paths.get(System.getProperty("user.dir"));
-        Path invoicePath = Paths.get(currentPath.toString(),"src","main","resources","invoices",fileName);
+        Path invoicePath = Paths.get(currentPath.toString(),"src","main","resources","static","invoices",fileName);
 
 
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -127,8 +133,6 @@ public class MainController {
         invoice+="</table>";
         invoice+="</body>";
         invoice+="</html>";
-
-
 
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
@@ -182,15 +186,20 @@ public class MainController {
 
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String email=authentication.getName();
-        User user=userService.getUserDetails(email).stream().findFirst().get();
+        User user=userService.getUserDetails(email).get();
+        List<Card> cards=cardService.getByOwner(user);
+        List<NFT> nfts=nftService.getByOwner(user);
 
-        //mav.addObject();
+        mav.addObject("user",user);
+        mav.addObject("nfts",nfts);
+        mav.addObject("cards",cards);
+
         mav.setViewName("profile");
         return mav;
     }
 
-    @RequestMapping(value={"/admin1"},method = RequestMethod.GET)
-    public ModelAndView admin1(){
+    @RequestMapping(value={"/admin"},method = RequestMethod.GET)
+    public ModelAndView admin(){
         ModelAndView mav=new ModelAndView();
         mav.setViewName("admin");
         return mav;
@@ -199,7 +208,12 @@ public class MainController {
 
     @RequestMapping(value={"/contact"},method = RequestMethod.GET)
     public ModelAndView contact(){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        String email=authentication.getName();
+        String name=userService.getUserDetails(email).get().getFirstName();
         ModelAndView mav=new ModelAndView();
+        mav.addObject("name",name);
+        mav.addObject("email",email);
         mav.setViewName("contact");
         return mav;
     }
@@ -219,14 +233,27 @@ public class MainController {
         return mav;
     }
 
-    @RequestMapping(value={"/collections/{collection_id}"},method = RequestMethod.GET)
-    public ModelAndView  collections(@PathVariable("collection_id") int collection_id){
+    @RequestMapping(value={"/collections"},method = RequestMethod.GET)
+    public ModelAndView  collections(@RequestParam("id") int collection_id){
         String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz"};
         if(collection_id>collections.length){
             return new ModelAndView("redirect:/404");
         }
+        Path currentPath = Paths.get(System.getProperty("user.dir"));
+        Path collectionPath = Paths.get(currentPath.toString(),"src","main","resources","static","collections",collections[collection_id]);
+        File file=new File(collectionPath.toString());
+
+        String nfts[]=file.list();
+        List<String> list = new ArrayList<String>(Arrays.asList(nfts));
+        for(int i=0;i<list.size();i++) {
+            Path nftPath = Paths.get("collections", collections[collection_id],list.get(i));
+            list.set(i,nftPath.toString());
+        }
+
         ModelAndView mav=new ModelAndView();
-        mav.setViewName("contact");
+        mav.addObject("items",list);
+        mav.addObject("name",collections[collection_id]);
+        mav.setViewName("gallery");
         return mav;
     }
 

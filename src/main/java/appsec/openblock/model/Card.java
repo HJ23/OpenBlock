@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 public class Card {
 
     @SequenceGenerator(
-            name = "users_sequence",
-            sequenceName = "users_sequence",
+            name = "cards_sequence",
+            sequenceName = "cards_sequence",
             allocationSize = 1
     )
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "users_sequence"
+            generator = "cards_sequence"
     )
     private Long id;
 
@@ -46,7 +46,7 @@ public class Card {
     }
 
     public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
+        this.cardNumber = cardNumber.replace(" ","");
     }
 
     public String getFullName() {
