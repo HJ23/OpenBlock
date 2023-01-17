@@ -121,7 +121,7 @@ public class User implements UserDetails  {
 
 
     @Column(name = "enabled")
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     public String getPrivateUserToken() {
         return privateUserToken;

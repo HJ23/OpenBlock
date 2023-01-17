@@ -5,6 +5,7 @@ import appsec.openblock.model.Card;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
 import appsec.openblock.service.CardService;
+import appsec.openblock.service.ComplainService;
 import appsec.openblock.service.NFTService;
 import appsec.openblock.service.UserService;
 import appsec.openblock.utils.Utilities;
@@ -35,6 +36,9 @@ public class MainController {
     private Logger logger=Logger.getLogger(MainController.class.getName());
 
     @Autowired
+    ComplainService complainService;
+
+    @Autowired
     UserService userService;
 
     @Autowired
@@ -43,7 +47,7 @@ public class MainController {
     @Autowired
     CardService cardService;
 
-    @RequestMapping(value={"/","/index","*"},method = RequestMethod.GET)
+    @RequestMapping(value={"/index","/"},method = RequestMethod.GET)
     public ModelAndView index(){
         HashSet<String> items=new HashSet<String>();
         Path currentPath = Paths.get(System.getProperty("user.dir"));
@@ -80,12 +84,9 @@ public class MainController {
         logger.info(authentication.getName()+"----"+authentication.getAuthorities().toString());
         logger.info("***********************************************");
 
-        if(authentication==null || authentication instanceof AnonymousAuthenticationToken) {
-            ModelAndView mav = new ModelAndView();
-            mav.setViewName("login");
-            return mav;
-        }
-            return new ModelAndView("redirect:/profile");
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("login");
+        return mav;
     }
 
     @RequestMapping(value={"/login"},method = RequestMethod.POST)
@@ -176,7 +177,7 @@ public class MainController {
             return "Email already registered!";
         if(userService.isMobilePresent(user))
             return "Mobile number already registered!";
-        userService.saveUser(user);
+        userService.initialSaveUser(user);
         return "OK";
     }
 
@@ -205,6 +206,16 @@ public class MainController {
         mav.setViewName("admin");
         return mav;
     }
+
+    @RequestMapping(value={"/complains"},method = RequestMethod.GET)
+    public ModelAndView complains(){
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("complains",complainService.getComplains());
+        mav.setViewName("complains");
+        return mav;
+    }
+
+
 
 
     @RequestMapping(value={"/contact"},method = RequestMethod.GET)

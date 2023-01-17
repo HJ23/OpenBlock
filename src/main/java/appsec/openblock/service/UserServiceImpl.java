@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
     @Override
-    public void saveUser(User user) {
+    public void initialSaveUser(User user) {
         try {
             user.setBalance(0.0);
             user.setAccountLocked(true);
@@ -38,7 +38,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
     }
 
-
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 
     @Override
     public boolean isUserPresent(User user){

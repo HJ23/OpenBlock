@@ -59,11 +59,10 @@ public class WebSecurityConfig {
 
         http.authenticationProvider(authenticationProvider());
         http.authorizeRequests()
-                // URL matching for accessibility
-                .antMatchers("/collections/**","/verification","/api/v1/otp").permitAll()
-                .antMatchers("/login","/register").anonymous()
-                .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**","/contact","/increaseBalance").hasAnyAuthority("USER")
+                .mvcMatchers("/login","/register").anonymous()
+                .antMatchers("/verification","/api/v1/otp","/profile-pictures/*").permitAll()
+                .antMatchers("/admin","/complains","/addCollection").hasAnyAuthority("USER")
+                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**","/contact","/increaseBalance","/auction","/api/v1/*").hasAnyAuthority("USER")
                 .and()
                 // form login
                 .csrf().disable().formLogin()
@@ -89,7 +88,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**","/assets/**","/profile-pictures/*");
+        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**","/assets/**","/profile-pictures/*","/collections/*");
     }
 
 }

@@ -1,5 +1,6 @@
 package appsec.openblock.controller.api;
 
+import appsec.openblock.DTO.Buy;
 import appsec.openblock.DTO.OTP;
 import appsec.openblock.model.Card;
 import appsec.openblock.model.Complain;
@@ -51,10 +52,11 @@ public class APIController {
     }
 
     @PostMapping(value="/api/v1/buy")
-    public ResponseEntity<String> buy(@RequestParam("eth") Double eth,@RequestParam("id") Long id,@RequestParam("card") String card){
+    public ResponseEntity<String> buy(@RequestBody Buy buy){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("FAKE TRANSACTION FROM "+buy.getCard()+"-- "+buy.getEth().toString()+" eth. --> "+authentication.getName());
         User user=userService.getUserDetails(authentication.getName()).get();
-        user.setBalance(user.getBalance()+eth);
+        user.setBalance(user.getBalance()+buy.getEth());
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
