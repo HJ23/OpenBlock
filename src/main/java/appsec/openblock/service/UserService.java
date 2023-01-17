@@ -20,5 +20,8 @@ public interface UserService {
     public void enableUser(User user);
     public void updateUser(User user,String email,String password,String profilePic,String mobile);
     public Collection<? extends GrantedAuthority> getAuthority(String email);
+    public Optional<User> getById(Long id);
+
+    public boolean isEnabled(String email);
 
 }

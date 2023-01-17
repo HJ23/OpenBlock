@@ -1134,6 +1134,19 @@ h6 {
   margin-top: 25px;
 }
 
+.error-box {
+  display: none;
+  color: #fff;
+  background: #df1529;
+  text-align: left;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.error-box br+br {
+  margin-top: 25px;
+}
+
 .contact .php-email-form .sent-message {
   display: none;
   color: #fff;

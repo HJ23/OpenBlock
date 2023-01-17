@@ -1130,6 +1130,20 @@ h6 {
   font-weight: 600;
 }
 
+.error-box {
+  display: none;
+  color: #fff;
+  background: #df1529;
+  text-align: left;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.error-box br+br {
+  margin-top: 25px;
+}
+
+
 .contact .php-email-form .error-message br+br {
   margin-top: 25px;
 }

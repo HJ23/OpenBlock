@@ -26,8 +26,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void saveUser(User user) {
         try {
-            user.setBalance(0);
-            user.setEnabled(false);
+            user.setBalance(0.0);
+            user.setAccountLocked(true);
             user.setPassword(Utilities.generateMD5Hash(user.getPassword()));
             user.setRole(Role.USER);
             user.setPrivateUserToken(Utilities.generatePrivateUserToken(user.getPassword()+user.getEmail()));
@@ -37,6 +37,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         userRepository.save(user);
     }
+
+
 
     @Override
     public boolean isUserPresent(User user){
@@ -93,5 +95,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
        return userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+    }
+
+    @Override
+    public Optional<User> getById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public boolean isEnabled(String email) {
+        return userRepository.findByEmail(email).get().isEnabled();
     }
 }

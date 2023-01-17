@@ -24,6 +24,7 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 
   <!-- Template Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
@@ -101,10 +102,8 @@
                 <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
               </div>
 
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Logged in !</div>
+               <div class="my-3">
+                <div class="error-box"></div>
               </div>
               <div class="text-center"><button type="submit">Submit</button></div>
             </form>
@@ -142,6 +141,16 @@
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
+
+  <script>
+    var path=location.search;
+    const urlParams = new URLSearchParams(path);
+    if(Array.from(urlParams).length!=0){
+      const error=urlParams.get("error");
+      $(".error-box").css("display","block");
+      $(".error-box").html(atob(error));
+    }
+  </script>
 
   <!-- <script src="assets/vendor/php-email-form/validate.js"></script> -->
 

@@ -50,6 +50,14 @@ public class APIController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
+    @PostMapping(value="/api/v1/buy")
+    public ResponseEntity<String> buy(@RequestParam("eth") Double eth,@RequestParam("id") Long id,@RequestParam("card") String card){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user=userService.getUserDetails(authentication.getName()).get();
+        user.setBalance(user.getBalance()+eth);
+        userService.saveUser(user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 
     @PostMapping(value={"/api/v1/otp"})
     public ResponseEntity<String> otpCheck(@RequestBody OTP otp){

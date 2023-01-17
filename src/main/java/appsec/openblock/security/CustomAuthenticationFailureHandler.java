@@ -5,6 +5,7 @@ import appsec.openblock.service.UserService;
 import appsec.openblock.utils.Utilities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -34,14 +35,16 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        if (exception instanceof DisabledException) {
+        System.out.println(exception);
+        if(exception instanceof BadCredentialsException){
+            response.sendRedirect("/login?error=VXNlcm5hbWUgb3IgcGFzc3dvcmQgaXMgaW5jb3JyZWN0ICE=");
+        }
+        else if (exception instanceof DisabledException) {
             String email=request.getParameter("email");
             User user=userService.getUserDetails(email).get();
             userService.setOtp(user);
             String token= Base64.getEncoder().encodeToString((email+"-"+user.getPrivateUserToken()).getBytes());
             response.sendRedirect("/verification?token="+token);
-        } else {
-            response.sendRedirect("/login?error=true");
         }
     }
 }

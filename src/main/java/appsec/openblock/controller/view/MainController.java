@@ -193,6 +193,7 @@ public class MainController {
         mav.addObject("user",user);
         mav.addObject("nfts",nfts);
         mav.addObject("cards",cards);
+        mav.addObject("id",user.getId());
 
         mav.setViewName("profile");
         return mav;
@@ -218,7 +219,7 @@ public class MainController {
         return mav;
     }
 
-    @RequestMapping(value={"/balance"},method = RequestMethod.GET)
+    @RequestMapping(value={"/addCard"},method = RequestMethod.GET)
     public ModelAndView addCard(){
         ModelAndView mav=new ModelAndView();
         mav.setViewName("addcard");
@@ -230,6 +231,19 @@ public class MainController {
     public ModelAndView notFound(){
         ModelAndView mav=new ModelAndView();
         mav.setViewName("404");
+        return mav;
+    }
+
+    @RequestMapping(value={"/increaseBalance"},method = RequestMethod.GET)
+    public ModelAndView increaseBalance(@RequestParam Long id){
+        Optional<User> user=userService.getById(id);
+        List<Card> cards=cardService.getByOwner(user.get());
+        if(cards.size()==0){
+            return new ModelAndView("redirect:/addCard");
+        }
+        ModelAndView mav=new ModelAndView();
+        mav.addObject("cards",cards);
+        mav.setViewName("increaseBalance");
         return mav;
     }
 
@@ -256,8 +270,4 @@ public class MainController {
         mav.setViewName("gallery");
         return mav;
     }
-
-
-
-
 }

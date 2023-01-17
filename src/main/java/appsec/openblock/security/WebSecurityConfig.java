@@ -1,5 +1,6 @@
 package appsec.openblock.security;
 
+import appsec.openblock.checkers.PostAuthChecker;
 import appsec.openblock.service.UserServiceImpl;
 import appsec.openblock.utils.Md5PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,18 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.sql.DataSource;
 
 
 
@@ -31,6 +27,7 @@ public class WebSecurityConfig {
 
     @Autowired
     private CustomLoginSucessHandler sucessHandler;
+
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -50,31 +47,31 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setPreAuthenticationChecks(toCheck -> {});
+        authProvider.setPostAuthenticationChecks(new PostAuthChecker());
 
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
-
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        http.authenticationProvider(authenticationProvider());
         http.authorizeRequests()
                 // URL matching for accessibility
-                .antMatchers("/", "/login", "/register","/collections/**","/admin/**","/verification","/api/v1/otp").permitAll()
+                .antMatchers("/collections/**","/verification","/api/v1/otp").permitAll()
+                .antMatchers("/login","/register").anonymous()
                 .antMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**","/contact","/api/v1/contact").hasAnyAuthority("USER")
+                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**","/contact","/increaseBalance").hasAnyAuthority("USER")
                 .and()
                 // form login
                 .csrf().disable().formLogin()
                 .loginPage("/login")
-                .failureUrl("/login?error=true").failureHandler(customAuthenticationFailureHandler)
                 .successHandler(sucessHandler)
                 .usernameParameter("email")
                 .passwordParameter("password")
+                .failureHandler(customAuthenticationFailureHandler)
                 .and()
                 // logout
                 .logout()
@@ -84,8 +81,8 @@ public class WebSecurityConfig {
                 .exceptionHandling()
                 .accessDeniedPage("/access-denied");
 
-        http.authenticationProvider(authenticationProvider());
-        http.headers().frameOptions().sameOrigin();
+
+        //http.headers().frameOptions().sameOrigin();
 
         return http.build();
     }

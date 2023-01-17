@@ -9,14 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -45,7 +42,7 @@ public class User implements UserDetails  {
     private int lastOtp;
 
     @Column(name = "balance")
-    private int balance;
+    private Double balance;
 
     @Column(name="profile_pic")
     private String profilePic;
@@ -92,11 +89,11 @@ public class User implements UserDetails  {
     @Transient
     private String captchaInput;
 
-    public int getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
@@ -124,7 +121,7 @@ public class User implements UserDetails  {
 
 
     @Column(name = "enabled")
-    private Boolean enabled = true;
+    private boolean enabled = true;
 
     public String getPrivateUserToken() {
         return privateUserToken;
@@ -183,6 +180,7 @@ public class User implements UserDetails  {
         return !locked;
     }
 
+    public void setAccountLocked(boolean locked){this.locked=locked;}
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
