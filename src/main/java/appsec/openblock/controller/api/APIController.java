@@ -1,15 +1,13 @@
 package appsec.openblock.controller.api;
 
+import appsec.openblock.DTO.Bid;
 import appsec.openblock.DTO.Buy;
 import appsec.openblock.DTO.OTP;
 import appsec.openblock.model.Card;
 import appsec.openblock.model.Complain;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
-import appsec.openblock.service.CardService;
-import appsec.openblock.service.ComplainService;
-import appsec.openblock.service.NFTService;
-import appsec.openblock.service.UserService;
+import appsec.openblock.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class APIController {
@@ -39,11 +34,15 @@ public class APIController {
     NFTService nftService;
     @Autowired
     UserService userService;
-
+    @Autowired
+    CollectionStorageService collectionStorageService;
     @Autowired
     CardService cardService;
     @Autowired
     ComplainService complainService;
+
+    @Autowired
+    FilesStorageService filesStorageService;
 
     @PostMapping(value="/api/v1/contact")
     public ResponseEntity<String> contact(@RequestBody Complain complain){
@@ -83,38 +82,22 @@ public class APIController {
                                      @RequestParam("artistFullName") String artistFullName,
                                      @RequestParam("endBidding") String time,
                                      @RequestParam("initialPrice") String initialPrice,
-                                     @RequestParam("collection") String collection,
+                                     @RequestParam("collection") int collection,
                                          @RequestParam("token") String cryptoAddress
                                      ){
+        collectionStorageService.save(image);
         LocalDateTime ldt=LocalDateTime.parse(time, DateTimeFormatter.ISO_DATE_TIME);
-        String fileName = image.getOriginalFilename();
-
-        Path currentPath = Paths.get(System.getProperty("user.dir"));
-        Path auctionPath = Paths.get(currentPath.toString(),"src","main","resources","static","collections","Auctions",fileName);
-
-        File serverFile = new File(auctionPath.toAbsolutePath().toString());
-        try {
-            image.transferTo(serverFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        String email=authentication.getName();
-        User user=userService.getUserDetails(email).stream().findFirst().get();
-
         NFT tmp=new NFT();
         tmp.setCollection(collection);
         tmp.setArtistFullName(artistFullName);
         tmp.setArtistCryptoAddress(cryptoAddress);
-        tmp.setFilePath(auctionPath.toAbsolutePath().toString());
+        tmp.setFilePath("auctions\\"+image.getOriginalFilename());
         tmp.setIsSold(false);
         tmp.setInitialPrice(initialPrice);
-        nftService.setOwner(user,tmp);
-
-        System.out.println(nftService.getByOwner(user));
-        System.out.println(nftService.getByOwner(user).get(0).getFilePath());
-
+        tmp.setLastBiddingPrice(0.0);
+        tmp.setArtistTotalSale(new Random().nextInt(1,203));
+        tmp.setEndBidding(ldt);
+        nftService.initialSaveNFT(tmp);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
@@ -140,9 +123,7 @@ public class APIController {
                                          @RequestParam("mobile") String mobile
     ){
 
-
-        System.out.println(newEmail+"---"+newPassword+"---"+mobile);
-
+        filesStorageService.save(image);
         String fileName = image.getOriginalFilename();
         Path currentPath = Paths.get(System.getProperty("user.dir"));
         Path profilePicturePath = Paths.get(currentPath.toString(),"src","main","resources","static","profile-pictures",fileName);
@@ -161,14 +142,14 @@ public class APIController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
-
-
-
+    @PostMapping(value = {"/api/v1/bid"})
+    public ResponseEntity<String> bid(@RequestBody Bid bid ){
+        Optional<NFT> nft=nftService.getById(bid.getId());
+        nft.ifPresent(obj->{
+            obj.setLastBidder(bid.getUid());
+            obj.setLastBiddingPrice(bid.getBid());
+            nftService.saveNFT(obj);
+        });
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 }
-
-
-
-
-
-
-

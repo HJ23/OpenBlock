@@ -4,17 +4,17 @@ import appsec.openblock.DTO.Login;
 import appsec.openblock.model.Card;
 import appsec.openblock.model.NFT;
 import appsec.openblock.model.User;
-import appsec.openblock.service.CardService;
-import appsec.openblock.service.ComplainService;
-import appsec.openblock.service.NFTService;
-import appsec.openblock.service.UserService;
+import appsec.openblock.service.*;
 import appsec.openblock.utils.Utilities;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -35,6 +35,10 @@ import java.util.logging.Logger;
 public class MainController {
     private Logger logger=Logger.getLogger(MainController.class.getName());
 
+    @Autowired
+    FilesStorageService filesStorageService;
+    @Autowired
+    CollectionStorageService collectionStorageService;
     @Autowired
     ComplainService complainService;
 
@@ -215,8 +219,37 @@ public class MainController {
         return mav;
     }
 
+    @RequestMapping(value = "/auction",method = RequestMethod.GET)
+    public ModelAndView auctionCollection(){
+        List<NFT> nfts=nftService.getAllUnSoldItems();
+        if(nfts.size()!=0) {
+            ModelAndView mav = new ModelAndView();
+            mav.addObject("nfts", nfts);
+            mav.setViewName("auction");
+            return mav;
+        }
+        return new ModelAndView("redirect:/404");
+    }
 
-
+    @RequestMapping(value = "/auctionDetails",method = RequestMethod.GET)
+    public ModelAndView auction(@RequestParam("id") Long id){
+        String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz","Freestyle"};
+        Optional<NFT> nft= nftService.getById(id);
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User authenticatedUser=userService.getUserDetails(authentication.getName()).get();
+        ModelAndView mav = new ModelAndView();
+        nft.ifPresent(obj -> {
+            mav.addObject("nft", obj);
+            if(obj.getLastBidder()!=null) {
+                User user=userService.getById(obj.getLastBidder()).get();
+                mav.addObject("name",user.getFirstName());
+            }
+            mav.addObject("uid",authenticatedUser.getId());
+            mav.setViewName("auctionDetails");
+            mav.addObject("collection",collections[obj.getCollection()]);
+        });
+        return mav;
+    }
 
     @RequestMapping(value={"/contact"},method = RequestMethod.GET)
     public ModelAndView contact(){
@@ -260,7 +293,7 @@ public class MainController {
 
     @RequestMapping(value={"/collections"},method = RequestMethod.GET)
     public ModelAndView  collections(@RequestParam("id") int collection_id){
-        String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz"};
+        String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz","Freestyle"};
         if(collection_id>collections.length){
             return new ModelAndView("redirect:/404");
         }
@@ -281,4 +314,19 @@ public class MainController {
         mav.setViewName("gallery");
         return mav;
     }
+
+    @GetMapping(value={"/profile-pictures/{filename}"})
+    @ResponseBody
+    public ResponseEntity<Resource> serveProfilePictures(@PathVariable String filename) {
+        Resource file = filesStorageService.load(filename);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"").header(HttpHeaders.CONTENT_TYPE,"image/jpeg").body(file);
+    }
+    @GetMapping(value={"/auctions/{filename}"})
+    @ResponseBody
+    public ResponseEntity<Resource> serveAuctionPictures(@PathVariable String filename) {
+        Resource file = collectionStorageService.load(filename);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"").header(HttpHeaders.CONTENT_TYPE,"image/jpeg").body(file);
+    }
+
+
 }

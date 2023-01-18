@@ -43,7 +43,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             String email=request.getParameter("email");
             User user=userService.getUserDetails(email).get();
             userService.setOtp(user);
-            String token= Base64.getEncoder().encodeToString((email+"-"+user.getPrivateUserToken()).getBytes());
+            String token= Base64.getEncoder().encodeToString((email+"-"+user.getPrivateUserToken()+"-"+user.getLastOtp()).getBytes());
             response.sendRedirect("/verification?token="+token);
         }
     }

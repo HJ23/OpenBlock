@@ -21,7 +21,7 @@ public class NFTServiceImpl implements NFTService {
     NFTRepository nftRepository;
 
     @Override
-    public void saveNFT(NFT nft) {
+    public void initialSaveNFT(NFT nft) {
         try {
             nft.setIsSold(false);
             Random randomGenerator = new Random();
@@ -31,6 +31,11 @@ public class NFTServiceImpl implements NFTService {
             logger.warning(exception.getMessage());
         }
 
+    }
+
+    @Override
+    public void saveNFT(NFT nft) {
+        nftRepository.save(nft);
     }
 
     @Override
@@ -52,5 +57,25 @@ public class NFTServiceImpl implements NFTService {
     @Override
     public List<NFT> getByOwner(User user) {
         return nftRepository.findByUserId(user.getId());
+    }
+
+    @Override
+    public List<NFT> getAllUnSoldItems() {
+        return  nftRepository.findAll().stream().filter(item -> !item.isSold()).toList();
+    }
+
+    @Override
+    public void setLastBidder(Long nftId ,Long userId, Double bid) {
+        Optional<NFT> nft= nftRepository.findById(nftId);
+        nft.ifPresent(obj->{
+            obj.setLastBiddingPrice(bid);
+            obj.setLastBidder(userId);
+            nftRepository.save(obj);
+        });
+    }
+
+    @Override
+    public Optional<NFT> getById(Long id) {
+        return nftRepository.findById(id);
     }
 }

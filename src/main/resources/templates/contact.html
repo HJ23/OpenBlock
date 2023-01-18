@@ -37,7 +37,7 @@
 
       <a href="index.html" class="logo d-flex align-items-center  me-auto me-lg-0">
         <div class="container">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/profile">
             <img src="assets/img/openblock.PNG" alt="" width="60" height="60">
           </a>
         </div>    
@@ -45,7 +45,7 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="/index">Home</a></li>
+          <li><a href="/profile">Home</a></li>
           <li class="dropdown"><a href="#"><span>Collections</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
               <ul>
                 <li><a href="/collections?id=1">Cryptopunks</a></li>
@@ -58,8 +58,12 @@
               </ul>
               
           </li>
-          <li><a href="/balance">My balance</a></li>
+          <li><a th:href="'/increaseBalance?id='+${id}">Increase balance</a></li>
+          <li><a  href="/addCard">Add Card</a></li>
+          <li><a  href="/invoice">Invoice</a></li> 
           <li><a href="/contact">Contact</a></li>
+          <li><a href="/logout">Logout</a></li>
+          
           
         </ul>
       </nav><!-- .navbar -->

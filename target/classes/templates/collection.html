@@ -46,26 +46,30 @@
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
         <i class="bi bi-camera"></i>
-        <h1>PhotoFolio</h1>
       </a>
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li class="dropdown"><a href="#" class="active"><span>Gallery</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-            <ul>
-              <li><a href="/collections?id=1">Cryptopunks</a></li>
-              <li><a href="/collections?id=2">Mutant Ape Yacht Club</a></li>
-              <li><a href="/collections?id=3">Bored Ape Yacht Club</a></li>
-              <li><a href="/collections?id=4">Moonbirds</a></li>
-              <li><a href="/collections?id=5">The Potatoz</a></li>
-              <li><a href="/collections?id=6">PANKSNOTDED</a></li>
-              <li><a class="text-danger" href="/auction">Auction</a></li> 
-            </ul>
+          <li><a href="/profile">Home</a></li>
+          <li class="dropdown"><a href="#"><span>Collections</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+              <ul>
+                <li><a href="/collections?id=1">Cryptopunks</a></li>
+                <li><a href="/collections?id=2">Mutant Ape Yacht Club</a></li>
+                <li><a href="/collections?id=3">Bored Ape Yacht Club</a></li>
+                <li><a href="/collections?id=4">Moonbirds</a></li>
+                <li><a href="/collections?id=5">The Potatoz</a></li>
+                <li><a href="/collections?id=6">PANKSNOTDED</a></li>
+                <li><a class="text-danger" href="/auction">Auction</a></li> 
+              </ul>
+              
           </li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a th:href="'/increaseBalance?id='+${id}">Increase balance</a></li>
+          <li><a  href="/addCard">Add Card</a></li>
+          <li><a  href="/invoice">Invoice</a></li> 
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/logout">Logout</a></li>
+          
+          
         </ul>
       </nav><!-- .navbar -->
 

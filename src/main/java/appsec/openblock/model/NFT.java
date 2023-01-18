@@ -29,24 +29,42 @@ public class NFT  {
         this.filePath = filePath;
     }
 
-    public void setSold(boolean sold) {
-        isSold = sold;
-    }
-
     @Column(name="file_path")
     private String filePath;
 
     @Column(name="collection")
-    private String collection;
+    private int collection;
 
     @Column(name="is_sold")
     private boolean isSold;
 
-    public String getCollection() {
+    @Column(name="last_bidding_price")
+    private Double lastBiddingPrice;
+
+    @Column(name="last_bidder")
+    private Long lastBidder;
+
+    public Long getLastBidder() {
+        return lastBidder;
+    }
+
+    public void setLastBidder(Long lastBidder) {
+        this.lastBidder = lastBidder;
+    }
+
+    public Double getLastBiddingPrice() {
+        return lastBiddingPrice;
+    }
+
+    public void setLastBiddingPrice(Double lastBiddingPrice) {
+        this.lastBiddingPrice = lastBiddingPrice;
+    }
+
+    public int getCollection() {
         return collection;
     }
 
-    public void setCollection(String collection) {
+    public void setCollection(int collection) {
         this.collection = collection;
     }
 
@@ -66,11 +84,11 @@ public class NFT  {
         this.artistCryptoAddress = artistCryptoAddress;
     }
 
-    public String getArtistTotalSale() {
+    public int getArtistTotalSale() {
         return artistTotalSale;
     }
 
-    public void setArtistTotalSale(String artistTotalSale) {
+    public void setArtistTotalSale(int artistTotalSale) {
         this.artistTotalSale = artistTotalSale;
     }
 
@@ -89,7 +107,7 @@ public class NFT  {
     private String artistCryptoAddress;
 
     @Column(name = "artist_total_sale")
-    private String artistTotalSale;
+    private int artistTotalSale;
 
     @Column(name = "initial_price")
     private String initialPrice;
@@ -129,7 +147,7 @@ public class NFT  {
     }
 
     public void setIsSold(boolean sold) {
-        isSold = sold;
+        this.isSold = sold;
     }
 
     public void setToken(String token) {
