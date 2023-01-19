@@ -56,6 +56,7 @@ public class APIController {
     @Autowired
     FilesStorageService filesStorageService;
     // No sanitization or encoding performed.
+    // That is why name and message parameters lead to stored-XSS.
     @PostMapping(value="/api/v1/contact")
     public ResponseEntity<String> contact(@RequestBody Complain complain){
         complainService.saveComplain(complain);
@@ -71,11 +72,9 @@ public class APIController {
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
-    // OTP brute-force possible here
+
     @PostMapping(value={"/api/v1/otp"})
     public ResponseEntity<String> otpCheck(@RequestBody OTP otp){
-        System.out.println(otp.getToken()+"--------------"+otp.getOtp());
-
         byte[] bdetails= Base64.getDecoder().decode(otp.getToken());
         String details = new String(bdetails, StandardCharsets.UTF_8);
         String email=details.split("-")[0];
@@ -88,7 +87,8 @@ public class APIController {
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }
-    // File traversal possible via collection file
+    // File traversal possible via collection file also same named files will be overwritten.
+    // filename should be unique (uuid) or canonical path should be checked.
     @PostMapping(value = {"/api/v1/collection"})
     public ResponseEntity<String> addNFT(@RequestParam("fileUpload") MultipartFile image,
                                      @RequestParam("artistFullName") String artistFullName,
@@ -121,12 +121,12 @@ public class APIController {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String email=authentication.getName();
         User user=userService.getUserDetails(email).stream().findFirst().get();
-
         cardService.setOwner(user,card);
         return "OK!";
     }
 
     // Path traversal via profile picture parameter
+    // image name should be unique (uuid) or canonical path should be checked.
     @PostMapping(value = {"/api/v1/profile"})
     public ResponseEntity<String> profileEdit(@RequestParam("profilePic") MultipartFile image,
                                          @RequestParam("email") String newEmail,
@@ -152,7 +152,10 @@ public class APIController {
         userService.updateUser(user,newEmail,newPassword,profilePictureDBPath.toString(),mobile);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
-
+    // bidXML parameter handles xml data insecurely.
+    // In order to secure it DTD option should be set to false. (XXE)
+    // Also user id handled without any check so it is possible to bid,
+    // behalf of another user which leads financial gain/loss.
     @PostMapping(value = {"/api/v1/bid"})
     public ResponseEntity<String> bid(@RequestParam("bidXML") String bidXML ){
         Bid bid;
@@ -161,19 +164,14 @@ public class APIController {
             InputSource is = new InputSource(new StringReader(xmlData));
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,false);
-           // factory.setFeature(XMLConstants.ACCESS_EXTERNAL_DTD,true);
 
             SAXParser saxParser = factory.newSAXParser();
             MyXMLHandler handler=new MyXMLHandler();
             saxParser.parse(is ,handler);
             bid=handler.getBidObject();
-
-
         }catch (SAXException | IOException |ParserConfigurationException e){
             throw new RuntimeException(e);
         }
-
-
         Optional<NFT> nft=nftService.getById(bid.getId());
         Optional<User> user=userService.getById(bid.getUid());
         if(user.isPresent() && user.get().getBalance()>=bid.getPrice()) {
@@ -187,5 +185,4 @@ public class APIController {
         }
         return new ResponseEntity<String>(bid.toString(),HttpStatus.ACCEPTED);
     }
-
 }

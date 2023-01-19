@@ -4,6 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.NoSuchAlgorithmException;
 
+
+// MD5 used for password hashing without any salt or pepper,
+// More secure hashing algorithms highly recommended.
 public class Md5PasswordEncoder implements PasswordEncoder {
     @Override
     public String encode(CharSequence rawPassword) {

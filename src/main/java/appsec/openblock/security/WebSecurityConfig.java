@@ -65,7 +65,7 @@ public class WebSecurityConfig {
                 .antMatchers("/admin","/complains","/addCollection").hasAnyAuthority("ADMIN")
                 .antMatchers("/profile/**","/balance/**","/invoice/*","/contact","/increaseBalance","/auction").hasAnyAuthority("USER")
                 .and()
-                // form login
+                // CSRF protection disabled
                 .csrf().disable().formLogin()
                 .loginPage("/login")
                 .successHandler(sucessHandler)
@@ -73,7 +73,6 @@ public class WebSecurityConfig {
                 .passwordParameter("password")
                 .failureHandler(customAuthenticationFailureHandler)
                 .and()
-                // logout
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/")

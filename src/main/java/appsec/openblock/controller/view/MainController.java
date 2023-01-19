@@ -81,6 +81,10 @@ public class MainController {
         return mav;
     }
 
+    // Authentication mechanism vulnerable to brute-force.
+    // After 5-6 unsuccessful attempt account should be locked.
+    // And after side-channel verification,
+    // It can be unlocked again.
     @RequestMapping(value={"/login"},method = RequestMethod.GET)
     public ModelAndView login(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -99,7 +103,10 @@ public class MainController {
 
     }
 
-
+    // Verification page has token parameter which is basically
+    // base64 encoded private values of user and OTP.
+    // Also base64 encoded token handled on client-side
+    // makes client-side vulnerable to DOM-XSS via token param.
     @RequestMapping(value="/verification",method = RequestMethod.GET)
     public ModelAndView verify(@RequestParam("token") String token){
         if(!token.equals("")) {
@@ -110,14 +117,13 @@ public class MainController {
         return new ModelAndView("redirect:/404");
     }
 
-
+    // In invoice generation process back-end handles parameters.
+    // without any sanitization or encoding leads to SSRF.
     @RequestMapping(value={"/invoice"},method = RequestMethod.GET)
     public void generateInvoice(HttpServletResponse response) throws IOException {
         String fileName=UUID.randomUUID().toString();
         Path currentPath = Paths.get(System.getProperty("user.dir"));
         Path invoicePath = Paths.get(currentPath.toString(),"src","main","resources","static","invoices",fileName);
-
-
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String email=authentication.getName();
         User user=userService.getUserDetails(email).stream().findFirst().get();
@@ -156,7 +162,7 @@ public class MainController {
         IOUtils.copy(out,response.getOutputStream());
     }
 
-
+    // All parameters in registration page are not encoded or sanitized.
     @RequestMapping(value={"/register"},method = RequestMethod.GET)
     public ModelAndView register(){
         ModelAndView mav=new ModelAndView();
@@ -164,9 +170,9 @@ public class MainController {
         mav.setViewName("register");
         return mav;
     }
-
-    // It doesn't encode or sanitize user supplied inputs beforehand therefor
-    // User supplied firstname and lastname vulnerable to XSS
+    // Captcha value here is easily computable.
+    // Also captcha values are not token based (recaptcha).
+    // Result stored on client-side as hidden element.
     @RequestMapping(value={"/register"},method = RequestMethod.POST)
     public @ResponseBody String registerSubmit(@Valid @ModelAttribute User user, BindingResult bindingResult){
         if( bindingResult.hasErrors() ) {
@@ -184,7 +190,7 @@ public class MainController {
         return "OK";
     }
 
-    // Because of /register page this becomes vulnerable to XSS
+    // Because of /register page this becomes vulnerable to stored self-XSS
     @RequestMapping(value={"/profile"},method = RequestMethod.GET)
     public ModelAndView profile(){
         ModelAndView mav=new ModelAndView();
@@ -211,7 +217,8 @@ public class MainController {
         return mav;
     }
 
-    // This page vulnerable to XSS via user supplied Message and Name parameter.
+    // This page vulnerable to stored-XSS via user supplied Message and Name parameter.
+    // Also api endpoint of this page doesn't check authentication of current user.
     @RequestMapping(value={"/complains"},method = RequestMethod.GET)
     public ModelAndView complains(){
         ModelAndView mav=new ModelAndView();
@@ -219,7 +226,7 @@ public class MainController {
         mav.setViewName("complains");
         return mav;
     }
-    //
+
     @RequestMapping(value = "/auction",method = RequestMethod.GET)
     public ModelAndView auctionCollection(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -233,7 +240,7 @@ public class MainController {
         }
         return new ModelAndView("redirect:/404");
     }
-    // Here name parameter vulnerable to XSS.
+    // Here name parameter vulnerable to stored-XSS.
     @RequestMapping(value = "/auctionDetails",method = RequestMethod.GET)
     public ModelAndView auction(@RequestParam("id") Long id){
         String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz","Freestyle"};
@@ -253,7 +260,6 @@ public class MainController {
         });
         return mav;
     }
-    // /complains in admin-side will execute payload provided to parameters here.
     @RequestMapping(value={"/contact"},method = RequestMethod.GET)
     public ModelAndView contact(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -311,6 +317,14 @@ public class MainController {
         return mav;
     }
 
+    // Open-redirect vulnerability here.
+    // url white-listing should take place in this function.
+    // only valid urls must allowed for redirection.
+    @GetMapping(value="/redirectto")
+    public ModelAndView redirect(@RequestParam("url") String url){
+        return new ModelAndView("redirect:"+url);
+    }
+
     @GetMapping(value={"/profile-pictures/{filename}"})
     @ResponseBody
     public ResponseEntity<Resource> serveProfilePictures(@PathVariable String filename) {
@@ -323,6 +337,4 @@ public class MainController {
         Resource file = collectionStorageService.load(filename);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"").header(HttpHeaders.CONTENT_TYPE,"image/jpeg").body(file);
     }
-
-
 }
