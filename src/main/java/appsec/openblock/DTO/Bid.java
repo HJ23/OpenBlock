@@ -1,16 +1,29 @@
 package appsec.openblock.DTO;
 
-public class Bid {
-    private Double bid;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+
+@XmlRootElement
+public class Bid implements Serializable {
+    private Double price;
     private Long uid;
     private Long id;
+    private String nonce;
 
-    public Double getBid() {
-        return bid;
+    public String getNonce() {
+        return nonce;
     }
 
-    public void setBid(Double bid) {
-        this.bid = bid;
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Long getUid() {
@@ -27,5 +40,10 @@ public class Bid {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString(){
+        return "Bid : "+this.price+" Nonce: "+this.nonce+" Id: "+this.id+" User id: "+this.uid;
     }
 }

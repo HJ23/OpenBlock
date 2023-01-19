@@ -84,10 +84,6 @@ public class MainController {
     @RequestMapping(value={"/login"},method = RequestMethod.GET)
     public ModelAndView login(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        logger.info("***********************************************");
-        logger.info(authentication.getName()+"----"+authentication.getAuthorities().toString());
-        logger.info("***********************************************");
-
         ModelAndView mav = new ModelAndView();
         mav.setViewName("login");
         return mav;
@@ -113,6 +109,7 @@ public class MainController {
         }
         return new ModelAndView("redirect:/404");
     }
+
 
     @RequestMapping(value={"/invoice"},method = RequestMethod.GET)
     public void generateInvoice(HttpServletResponse response) throws IOException {
@@ -168,6 +165,8 @@ public class MainController {
         return mav;
     }
 
+    // It doesn't encode or sanitize user supplied inputs beforehand therefor
+    // User supplied firstname and lastname vulnerable to XSS
     @RequestMapping(value={"/register"},method = RequestMethod.POST)
     public @ResponseBody String registerSubmit(@Valid @ModelAttribute User user, BindingResult bindingResult){
         if( bindingResult.hasErrors() ) {
@@ -185,6 +184,7 @@ public class MainController {
         return "OK";
     }
 
+    // Because of /register page this becomes vulnerable to XSS
     @RequestMapping(value={"/profile"},method = RequestMethod.GET)
     public ModelAndView profile(){
         ModelAndView mav=new ModelAndView();
@@ -211,6 +211,7 @@ public class MainController {
         return mav;
     }
 
+    // This page vulnerable to XSS via user supplied Message and Name parameter.
     @RequestMapping(value={"/complains"},method = RequestMethod.GET)
     public ModelAndView complains(){
         ModelAndView mav=new ModelAndView();
@@ -218,19 +219,21 @@ public class MainController {
         mav.setViewName("complains");
         return mav;
     }
-
+    //
     @RequestMapping(value = "/auction",method = RequestMethod.GET)
     public ModelAndView auctionCollection(){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         List<NFT> nfts=nftService.getAllUnSoldItems();
         if(nfts.size()!=0) {
             ModelAndView mav = new ModelAndView();
             mav.addObject("nfts", nfts);
+            mav.addObject("id",userService.getUserDetails(authentication.getName()).get().getId());
             mav.setViewName("auction");
             return mav;
         }
         return new ModelAndView("redirect:/404");
     }
-
+    // Here name parameter vulnerable to XSS.
     @RequestMapping(value = "/auctionDetails",method = RequestMethod.GET)
     public ModelAndView auction(@RequestParam("id") Long id){
         String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz","Freestyle"};
@@ -250,7 +253,7 @@ public class MainController {
         });
         return mav;
     }
-
+    // /complains in admin-side will execute payload provided to parameters here.
     @RequestMapping(value={"/contact"},method = RequestMethod.GET)
     public ModelAndView contact(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -270,14 +273,7 @@ public class MainController {
         return mav;
     }
 
-
-    @RequestMapping(value={"/404"},method = RequestMethod.GET)
-    public ModelAndView notFound(){
-        ModelAndView mav=new ModelAndView();
-        mav.setViewName("404");
-        return mav;
-    }
-
+    //
     @RequestMapping(value={"/increaseBalance"},method = RequestMethod.GET)
     public ModelAndView increaseBalance(@RequestParam Long id){
         Optional<User> user=userService.getById(id);
@@ -290,7 +286,7 @@ public class MainController {
         mav.setViewName("increaseBalance");
         return mav;
     }
-
+    // Directory traversal possible via nft picture upload functionality
     @RequestMapping(value={"/collections"},method = RequestMethod.GET)
     public ModelAndView  collections(@RequestParam("id") int collection_id){
         String collections[]={"BoredApeYachtClub","CryptoPunks","CryptoUnicorns","MoonBirds","MutantApeYachtClub","Panksnoted","ThePotatoz","Freestyle"};

@@ -80,8 +80,8 @@
 
             <div class="chat-container" th:each="complain : ${complains}">
                 <img src="assets/img/testimonials/testimonials-1.jpg" alt="Avatar" style="width:100%;">
-                <p th:text="'Name: ' + ${complain.getName()}+'      Email: '+${complain.getEmail()} "></p>
-                <p th:text="'Message: '+${complain.getMessage()}"></p>
+                <p th:utext="'Name: ' + ${complain.getName()}+'      Email: '+${complain.getEmail()} "></p>
+                <p th:utext="'Message: '+${complain.getMessage()}"></p>
                 <span class="time-right"></span>
               </div>
 

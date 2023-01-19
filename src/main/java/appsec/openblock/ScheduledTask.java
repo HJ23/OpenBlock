@@ -19,8 +19,9 @@ public class ScheduledTask {
     @Autowired
     UserService userService;
 
-
-    @Scheduled(fixedDelay = 10000)
+    // Bussiness login error 30 second delay even after end bidding time passed
+    // Solution: Bid submission page check if end bidding time passed or not.
+    @Scheduled(fixedDelay = 30000)
     public void checkBiddingDateTime(){
         LocalDateTime now;
         LocalDateTime endBidding;

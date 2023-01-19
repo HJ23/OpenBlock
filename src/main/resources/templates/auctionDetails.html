@@ -58,8 +58,11 @@
                 <li><a href="/collections?id=6">PANKSNOTDED</a></li>
                 <li><a class="text-danger" href="/auction">Auction</a></li> 
               </ul>
+              
           </li>
-          <li><a href="/balance">My balance</a></li>
+          <li><a th:href="'/increaseBalance?id='+${uid}">Increase balance</a></li>
+          <li><a  href="/addCard">Add Card</a></li>
+          <li><a  href="/invoice">Invoice</a></li> 
           <li><a href="/contact">Contact</a></li>
           <li><a href="/logout">Logout</a></li>
           
@@ -91,12 +94,9 @@
             <img th:src="${nft.getFilePath()}" class="img-fluid" alt="">
 
           </div>
-          
-
           <div class="col-lg-5 content">
             <h2>Artist Profile :</h2>
             <p class="fst-italic py-3">
-             
             </p>
             <div class="row">
               <div class="col-lg-6">
@@ -151,13 +151,13 @@
 
             <div class="chat-container" th:if="${name}">
                 <img src="assets/img/testimonials/testimonials-1.jpg" alt="Avatar" style="width:100%;">
-                <p th:text="${name}"></p>
+                <p th:utext="${name}"></p>
                 <p th:text="${nft.getLastBiddingPrice()}"><iconify-icon icon="fa-brands:ethereum"></iconify-icon></p>
                 <span class="time-right"></span>
               </div>
           </div> 
 
-
+          <div class="container">
           <form class="php-email-form" >
               
             <div class="form-group mb-4">
@@ -168,8 +168,12 @@
                 </div>
                 </div>
              </div>
+             <div class="my-3">
+              <div class="error-box" style="display: none"></div>
+            </div>
              <div class="text-center"><button type="button" onclick="send()">Submit bid</button></div>
           </form>
+        </div>
         </div>
       </div>
     </section><!-- End Contact Section -->
@@ -199,27 +203,42 @@
   <script src="assets/js/main.js"></script>
 
   <script type="text/javascript">
+     var path=location.search;
+     const urlParams = new URLSearchParams(path);
+     if(urlParams.get("error")!=undefined){
+      const error=urlParams.get("error");
+      $(".error-box").css("display","block");
+      $(".error-box").html(atob(error));
+     }
+
     function send() {
         var path=location.search;
         const urlParams = new URLSearchParams(path);
-        const id=urlParams.get("id");
-
-        var otp_json = {
-            "uid": parseInt($("#uid").val(),10),
-            "id": parseInt(id,10),
-            "bid":parseFloat($("#bid").val())
-        }
+        var uid = parseInt($("#uid").val(),10)
+        var id=parseInt(urlParams.get("id"),10);
+        var price=parseFloat($("#bid").val());
+        var payload=`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<bid>
+<uid>${uid}</uid>
+<id>${id}</id>
+<price>${price}</price>
+<nonce>To be implemented aganist csrf attack!</nonce>
+</bid>`;
+         
         $.ajax({
             url: '/api/v1/bid',
             type: 'post',
-            dataType: 'json',
-            contentType: 'application/json',
+            contentType: 'application/x-www-form-urlencoded',
             statusCode:{
               202:function(){
-                window.location.href="/auction?id="+id;
+                window.location.href="/auctionDetails?id="+id;
+              },
+              406:function(){
+                window.location.href="/auctionDetails?id="+id+"&error=SW5zdWZmaWNpZW50IGV0aGVyaXVtIHBsZWFzZSBpbmNyZWFzZSB5b3VyIGJhbGFuY2UgIQ==";
               }
+
             },
-            data: JSON.stringify(otp_json)
+            data: {bidXML:btoa(payload)}
         });
     }
 

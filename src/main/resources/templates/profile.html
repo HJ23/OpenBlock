@@ -78,7 +78,7 @@
       <div class="container position-relative">
         <div class="row d-flex justify-content-center">
           <div class="col-lg-6 text-center">
-            <h2 th:text="${user.getFirstName() + ' ' + user.getLastName()}"></h2>
+            <h2 th:utext="${user.getFirstName() + ' ' + user.getLastName()}"></h2>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@
                     <ul> 
                       <li  th:each="nft : ${nfts}">
                         <i class="bi bi-chevron-right"></i>
-                        <span th:text="${nft.getToken()}">  </span>
+                        <span th:utext="${nft.getToken()}">  </span>
                        </li>
                     <ul>
                   </li> 

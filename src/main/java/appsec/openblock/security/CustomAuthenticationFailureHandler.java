@@ -35,10 +35,12 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        System.out.println(exception);
+
+        // DOM XSS possible
         if(exception instanceof BadCredentialsException){
             response.sendRedirect("/login?error=VXNlcm5hbWUgb3IgcGFzc3dvcmQgaXMgaW5jb3JyZWN0ICE=");
         }
+        // verification token generation is vulnerable also XSS possible
         else if (exception instanceof DisabledException) {
             String email=request.getParameter("email");
             User user=userService.getUserDetails(email).get();

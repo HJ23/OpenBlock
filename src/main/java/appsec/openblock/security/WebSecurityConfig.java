@@ -61,8 +61,9 @@ public class WebSecurityConfig {
         http.authorizeRequests()
                 .mvcMatchers("/login","/register").anonymous()
                 .antMatchers("/verification","/api/v1/otp","/profile-pictures/*").permitAll()
-                .antMatchers("/admin","/complains","/addCollection").hasAnyAuthority("USER")
-                .antMatchers("/profile/**","/balance/**","/invoice/*","/api/**","/contact","/increaseBalance","/auction","/api/v1/*").hasAnyAuthority("USER")
+                .antMatchers("/api/v1/*").authenticated()
+                .antMatchers("/admin","/complains","/addCollection").hasAnyAuthority("ADMIN")
+                .antMatchers("/profile/**","/balance/**","/invoice/*","/contact","/increaseBalance","/auction").hasAnyAuthority("USER")
                 .and()
                 // form login
                 .csrf().disable().formLogin()
@@ -78,7 +79,7 @@ public class WebSecurityConfig {
                 .logoutSuccessUrl("/")
                 .and()
                 .exceptionHandling()
-                .accessDeniedPage("/access-denied");
+                .accessDeniedPage("/403");
 
 
         //http.headers().frameOptions().sameOrigin();
