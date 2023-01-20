@@ -1,6 +1,5 @@
 package appsec.openblock.service;
 
-import appsec.openblock.model.NFT;
 import appsec.openblock.model.Role;
 import appsec.openblock.model.User;
 import appsec.openblock.repository.UserRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -30,9 +28,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             user.setAccountLocked(true);
             user.setPassword(Utilities.generateMD5Hash(user.getPassword()));
             user.setRole(Role.USER);
-            user.setPrivateUserToken(Utilities.generatePrivateUserToken(user.getPassword()+user.getEmail()));
+            user.setPrivateUserToken(Utilities.generatePrivateUserToken(user.getPassword() + user.getEmail()));
             user.setLastOtp(Utilities.generateOTP());
-        }catch (NoSuchAlgorithmException exception){
+        } catch (NoSuchAlgorithmException exception) {
             return;
         }
         userRepository.save(user);
@@ -44,9 +42,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public boolean isUserPresent(User user){
-        Optional<User> userFromDB=userRepository.findByEmail(user.getEmail());
-        if(userFromDB.isPresent()){
+    public boolean isUserPresent(User user) {
+        Optional<User> userFromDB = userRepository.findByEmail(user.getEmail());
+        if (userFromDB.isPresent()) {
             return true;
         }
         return false;
@@ -65,21 +63,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void updateUser(User user,String email, String password, String profilePic,String mobile) {
+    public void updateUser(User user, String email, String password, String profilePic, String mobile) {
         try {
             user.setProfilePic(profilePic);
             user.setEmail(email);
             user.setMobile(mobile);
             user.setPassword(Utilities.generateMD5Hash(password));
             userRepository.save(user);
-        }catch (NoSuchAlgorithmException exp){
+        } catch (NoSuchAlgorithmException exp) {
         }
     }
 
     @Override
-    public boolean isMobilePresent(User user){
-        Optional<User> userFromDB=userRepository.findByMobile(user.getMobile());
-        if(userFromDB.isPresent()){
+    public boolean isMobilePresent(User user) {
+        Optional<User> userFromDB = userRepository.findByMobile(user.getMobile());
+        if (userFromDB.isPresent()) {
             return true;
         }
         return false;
@@ -97,7 +95,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-       return userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
     @Override

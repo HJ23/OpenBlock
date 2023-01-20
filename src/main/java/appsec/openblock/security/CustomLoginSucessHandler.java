@@ -4,15 +4,11 @@ package appsec.openblock.security;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,21 +20,21 @@ public class CustomLoginSucessHandler extends SimpleUrlAuthenticationSuccessHand
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
         String targetUrl = determineTargetUrl(authentication);
-        if(response.isCommitted()) return;
-        response.setHeader("Location",targetUrl);
+        if (response.isCommitted()) return;
+        response.setHeader("Location", targetUrl);
         response.setStatus(302);
     }
 
-    protected String determineTargetUrl(Authentication authentication){
+    protected String determineTargetUrl(Authentication authentication) {
         String url = "/login";
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         List<String> roles = new ArrayList<String>();
-        for(GrantedAuthority a : authorities){
+        for (GrantedAuthority a : authorities) {
             roles.add(a.getAuthority());
         }
-        if(roles.contains("ADMIN")){
+        if (roles.contains("ADMIN")) {
             url = "/admin";
-        }else if(roles.contains("USER")) {
+        } else if (roles.contains("USER")) {
             url = "/profile";
         }
         return url;

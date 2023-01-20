@@ -17,7 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -35,7 +34,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public Md5PasswordEncoder passwordEncoder(){
+    public Md5PasswordEncoder passwordEncoder() {
         return new Md5PasswordEncoder();
     }
 
@@ -47,23 +46,25 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPreAuthenticationChecks(toCheck -> {});
+        authProvider.setPreAuthenticationChecks(toCheck -> {
+        });
         authProvider.setPostAuthenticationChecks(new PostAuthChecker());
 
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authenticationProvider(authenticationProvider());
         http.authorizeRequests()
-                .mvcMatchers("/login","/register").anonymous()
-                .antMatchers("/verification","/api/v1/otp","/profile-pictures/*").permitAll()
+                .mvcMatchers("/login", "/register").anonymous()
+                .antMatchers("/verification", "/api/v1/otp", "/profile-pictures/*").permitAll()
                 .antMatchers("/api/v1/*").authenticated()
-                .antMatchers("/admin","/complains","/addCollection").hasAnyAuthority("ADMIN")
-                .antMatchers("/profile/**","/balance/**","/invoice/*","/contact","/increaseBalance","/auction").hasAnyAuthority("USER")
+                .antMatchers("/admin", "/complains", "/addCollection").hasAnyAuthority("ADMIN")
+                .antMatchers("/profile/**", "/balance/**", "/invoice/*", "/contact", "/increaseBalance", "/auction").hasAnyAuthority("USER")
                 .and()
                 // CSRF protection disabled
                 .csrf().disable().formLogin()
@@ -88,7 +89,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**","/assets/**","/profile-pictures/*","/collections/*");
+        return (web) -> web.ignoring().antMatchers("/images/**", "/js/**", "/webjars/**", "/assets/**", "/profile-pictures/*", "/collections/*");
     }
 
 }

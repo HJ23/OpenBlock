@@ -5,34 +5,31 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MyXMLHandler extends DefaultHandler {
 
     private Bid bid;
     private StringBuilder data = null;
-    boolean nonce= false;
+    boolean nonce = false;
     boolean bid_id = false;
     boolean uid = false;
     boolean id = false;
 
-    public Bid getBidObject(){
+    public Bid getBidObject() {
         return bid;
     }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("bid")) {
             bid = new Bid();
-        }
-       else if (qName.equalsIgnoreCase("id")) {
-            id=true;
+        } else if (qName.equalsIgnoreCase("id")) {
+            id = true;
         } else if (qName.equalsIgnoreCase("price")) {
-            bid_id=true;
+            bid_id = true;
         } else if (qName.equalsIgnoreCase("uid")) {
-            uid=true;
+            uid = true;
         } else if (qName.equalsIgnoreCase("nonce")) {
-            nonce=true;
+            nonce = true;
         }
         data = new StringBuilder();
     }

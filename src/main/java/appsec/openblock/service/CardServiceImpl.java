@@ -22,8 +22,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void setOwner(User user,Card card) {
-        userRepository.findById(user.getId()).map( us->{
+    public void setOwner(User user, Card card) {
+        userRepository.findById(user.getId()).map(us -> {
             card.setUser(us);
             return cardRepository.save(card);
         });

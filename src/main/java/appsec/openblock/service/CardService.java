@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CardService {
     public List<Card> getByOwner(User user);
-    public void setOwner(User user,Card card);
+
+    public void setOwner(User user, Card card);
 }

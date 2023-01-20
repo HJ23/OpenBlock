@@ -2,10 +2,9 @@ package appsec.openblock.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name="cards")
+@Table(name = "cards")
 public class Card {
 
     @SequenceGenerator(
@@ -21,23 +20,23 @@ public class Card {
     private Long id;
 
     @NotNull(message = "Card number can not be null!")
-    @Column(name="card_number")
+    @Column(name = "card_number")
     private String cardNumber;
 
     @NotNull(message = "Card owner full name can not be null!")
-    @Column(name="full_name")
+    @Column(name = "full_name")
     private String fullName;
 
     @NotNull(message = "Security code can not be null!")
-    @Column(name="security_code")
+    @Column(name = "security_code")
     private String securityCode;
 
     @NotNull(message = "Expire date can not be null!")
-    @Column(name="expire_date")
+    @Column(name = "expire_date")
     private String expireDate;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
 
@@ -46,7 +45,7 @@ public class Card {
     }
 
     public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber.replace(" ","");
+        this.cardNumber = cardNumber.replace(" ", "");
     }
 
     public String getFullName() {
@@ -80,6 +79,7 @@ public class Card {
     public void setUser(User user) {
         this.user = user;
     }
+
     public void setId(Long id) {
         this.id = id;
     }

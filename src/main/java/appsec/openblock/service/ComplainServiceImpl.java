@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ComplainServiceImpl implements ComplainService{
+public class ComplainServiceImpl implements ComplainService {
     @Autowired
     ComplainRepository complainRepository;
 

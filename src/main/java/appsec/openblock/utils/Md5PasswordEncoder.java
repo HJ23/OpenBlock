@@ -12,15 +12,17 @@ public class Md5PasswordEncoder implements PasswordEncoder {
     public String encode(CharSequence rawPassword) {
         try {
             return Utilities.generateMD5Hash(rawPassword.toString());
-        }catch (NoSuchAlgorithmException exp){}
+        } catch (NoSuchAlgorithmException exp) {
+        }
         return "";
     }
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        try{
+        try {
             return Utilities.generateMD5Hash(rawPassword.toString()).equals(encodedPassword);
-        }catch (NoSuchAlgorithmException e){}
+        } catch (NoSuchAlgorithmException e) {
+        }
         return false;
     }
 }

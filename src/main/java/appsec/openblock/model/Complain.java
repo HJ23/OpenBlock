@@ -3,7 +3,7 @@ package appsec.openblock.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name="complains")
+@Table(name = "complains")
 public class Complain {
     @SequenceGenerator(
             name = "complains_sequence",
@@ -17,16 +17,16 @@ public class Complain {
     )
     private Long id;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="subject")
+    @Column(name = "subject")
     private String subject;
 
-    @Column(name="message")
+    @Column(name = "message")
     private String message;
 
     public String getEmail() {

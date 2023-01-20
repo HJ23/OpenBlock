@@ -43,7 +43,7 @@ public class Bid implements Serializable {
     }
 
     @Override
-    public String toString(){
-        return "Bid : "+this.price+" Nonce: "+this.nonce+" Id: "+this.id+" User id: "+this.uid;
+    public String toString() {
+        return "Bid : " + this.price + " Nonce: " + this.nonce + " Id: " + this.id + " User id: " + this.uid;
     }
 }

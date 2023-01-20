@@ -2,7 +2,6 @@ package appsec.openblock.security;
 
 import appsec.openblock.model.User;
 import appsec.openblock.service.UserService;
-import appsec.openblock.utils.Utilities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Optional;
 
 @Component
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
@@ -37,16 +35,16 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
         // DOM XSS possible
-        if(exception instanceof BadCredentialsException){
+        if (exception instanceof BadCredentialsException) {
             response.sendRedirect("/login?error=VXNlcm5hbWUgb3IgcGFzc3dvcmQgaXMgaW5jb3JyZWN0ICE=");
         }
         // verification token generation is vulnerable also XSS possible
         else if (exception instanceof DisabledException) {
-            String email=request.getParameter("email");
-            User user=userService.getUserDetails(email).get();
+            String email = request.getParameter("email");
+            User user = userService.getUserDetails(email).get();
             userService.setOtp(user);
-            String token= Base64.getEncoder().encodeToString((email+"-"+user.getPrivateUserToken()+"-"+user.getLastOtp()).getBytes());
-            response.sendRedirect("/verification?token="+token);
+            String token = Base64.getEncoder().encodeToString((email + "-" + user.getPrivateUserToken() + "-" + user.getLastOtp()).getBytes());
+            response.sendRedirect("/verification?token=" + token);
         }
     }
 }

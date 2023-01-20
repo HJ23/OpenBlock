@@ -17,7 +17,7 @@ import java.util.Collections;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails  {
+public class User implements UserDetails {
     @SequenceGenerator(
             name = "users_sequence",
             sequenceName = "users_sequence",
@@ -38,13 +38,13 @@ public class User implements UserDetails  {
         this.lastOtp = lastOtp;
     }
 
-    @Column(name="last_otp")
+    @Column(name = "last_otp")
     private int lastOtp;
 
     @Column(name = "balance")
     private Double balance;
 
-    @Column(name="profile_pic")
+    @Column(name = "profile_pic")
     private String profilePic;
 
     public String getProfilePic() {
@@ -55,7 +55,7 @@ public class User implements UserDetails  {
         this.profilePic = profilePic;
     }
 
-    @Column(name="private_user_token")
+    @Column(name = "private_user_token")
     private String privateUserToken;
 
     @NotNull(message = "First Name cannot be empty")
@@ -138,6 +138,7 @@ public class User implements UserDetails  {
     public void setPrivateUserToken(String privateUserToken) {
         this.privateUserToken = privateUserToken;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
@@ -161,7 +162,7 @@ public class User implements UserDetails  {
         return password;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -180,7 +181,10 @@ public class User implements UserDetails  {
         return !locked;
     }
 
-    public void setAccountLocked(boolean locked){this.locked=locked;}
+    public void setAccountLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
@@ -191,29 +195,47 @@ public class User implements UserDetails  {
         return enabled;
     }
 
-    public Role getRole() { return role; }
+    public Role getRole() {
+        return role;
+    }
 
     public void setRole(Role role) {
         this.role = role;
     }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getFirstName() { return firstName; }
+    public String getFirstName() {
+        return firstName;
+    }
 
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-    public String getMobile() { return mobile; }
+    public String getMobile() {
+        return mobile;
+    }
 
-    public void setMobile(String mobile) { this.mobile = mobile; }
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-    public String getLastName() { return lastName; }
+    public String getLastName() {
+        return lastName;
+    }
 
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 }

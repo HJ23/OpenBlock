@@ -1,14 +1,12 @@
 package appsec.openblock.model;
 
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="NFT")
-public class NFT  {
+@Table(name = "NFT")
+public class NFT {
     @SequenceGenerator(
             name = "nft_sequence",
             sequenceName = "nft_sequence",
@@ -29,19 +27,19 @@ public class NFT  {
         this.filePath = filePath;
     }
 
-    @Column(name="file_path")
+    @Column(name = "file_path")
     private String filePath;
 
-    @Column(name="collection")
+    @Column(name = "collection")
     private int collection;
 
-    @Column(name="is_sold")
+    @Column(name = "is_sold")
     private boolean isSold;
 
-    @Column(name="last_bidding_price")
+    @Column(name = "last_bidding_price")
     private Double lastBiddingPrice;
 
-    @Column(name="last_bidder")
+    @Column(name = "last_bidder")
     private Long lastBidder;
 
     public Long getLastBidder() {
@@ -112,11 +110,11 @@ public class NFT  {
     @Column(name = "initial_price")
     private String initialPrice;
 
-    @Column(name = "token",unique = true) // unique art token
+    @Column(name = "token", unique = true) // unique art token
     private String token;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public User getUser() {
@@ -127,7 +125,7 @@ public class NFT  {
         this.user = user;
     }
 
-    @Column(name="end_bidding")
+    @Column(name = "end_bidding")
     private LocalDateTime endBidding;
 
     public LocalDateTime getEndBidding() {

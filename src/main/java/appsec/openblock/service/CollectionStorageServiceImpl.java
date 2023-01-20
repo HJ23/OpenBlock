@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 @Service
 public class CollectionStorageServiceImpl implements CollectionStorageService {
-    private final Path root = Paths.get(System.getProperty("user.dir"),"uploads","auctions");
+    private final Path root = Paths.get(System.getProperty("user.dir"), "uploads", "auctions");
 
     @Override
     public void init() {
