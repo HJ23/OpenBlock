@@ -167,9 +167,11 @@ public class APIController {
         Optional<User> user = userService.getById(bid.getUid());
         if (user.isPresent() && user.get().getBalance() >= bid.getPrice()) {
             nft.ifPresent(obj -> {
-                obj.setLastBidder(bid.getUid());
-                obj.setLastBiddingPrice(bid.getPrice());
-                nftService.saveNFT(obj);
+                if(obj.getLastBiddingPrice()<bid.getPrice()) {
+                  obj.setLastBidder(bid.getUid());
+                  obj.setLastBiddingPrice(bid.getPrice());
+                  nftService.saveNFT(obj);
+                }
             });
         } else {
             return new ResponseEntity<String>(bid.toString(), HttpStatus.NOT_ACCEPTABLE);
