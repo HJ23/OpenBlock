@@ -6,4 +6,5 @@ This project vulnerable to :
 - @ResponseStatus
 - @Builder
 - @AllArgsConstructor
+- @Data
 
